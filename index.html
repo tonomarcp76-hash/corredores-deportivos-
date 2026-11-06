@@ -27,17 +27,19 @@
         }
         .form-agregar { display: none; text-align: left; }
         .form-agregar h3 { color: #00ffcc; margin-bottom: 20px; text-align: center; }
-        .form-agregar label { display: block; margin: 10px 0 5px; font-weight: bold; }
-        .form-agregar input { width: 100%; margin: 0 0 10px; }
-        
-        input {
-            padding: 12px 15px;
-            font-size: 1rem;
-            border-radius: 10px;
-            border: none;
-            background: rgba(255,255,255,0.95);
-            color: #0f2027;
+        .form-agregar label { display: block; margin: 12px 0 5px; font-weight: bold; }
+        .form-agregar input[type="text"],
+        .form-agregar input[type="number"] { 
+            width: 100%; margin: 0 0 10px; 
+            padding: 12px 15px; border-radius: 10px; border: none;
+            background: rgba(255,255,255,0.95); color: #0f2027;
         }
+        .form-agregar input[type="file"] {
+            width: 100%; padding: 10px; margin: 5px 0 15px;
+            background: rgba(255,255,255,0.1); border-radius: 8px;
+            border: 1px dashed #00ffcc; color: #fff;
+        }
+        
         button {
             padding: 12px 25px;
             font-size: 1rem;
@@ -108,16 +110,16 @@
         <p>Escribe tu número y ve tus fotos</p>
     </header>
 
-    <!-- BOTÓN ACTUALIZADO -->
+    <!-- BOTÓN PRINCIPAL -->
     <div style="text-align: center; margin-bottom: 20px;">
         <button id="btnMostrarForm" onclick="mostrarFormulario()">📷 Subir Fotos</button>
     </div>
 
-    <!-- FORMULARIO -->
+    <!-- FORMULARIO PARA SUBIR FOTOS DIRECTAMENTE -->
     <div id="formAgregar" class="form-agregar">
         <h3>📷 Subir Fotos / Registrar Corredor</h3>
         
-        <label>Número:</label>
+        <label>Número del Corredor:</label>
         <input type="number" id="fNumero" min="1" placeholder="Ej: 1">
         
         <label>Nombre Completo:</label>
@@ -132,13 +134,13 @@
         <label>Tiempo:</label>
         <input type="text" id="fTiempo" placeholder="Ej: 18:45 min">
         
-        <label>Nombre del archivo de foto de perfil:</label>
-        <input type="text" id="fFotoPerfil" placeholder="Ej: corredor1-perfil.jpg">
+        <label>📷 Foto de Perfil:</label>
+        <input type="file" id="fFotoPerfil" accept="image/*">
         
-        <label>Nombres de fotos de la galería (separados por coma):</label>
-        <input type="text" id="fGaleria" placeholder="Ej: foto1.jpg, foto2.jpg">
+        <label>📸 Fotos de la Galería (puedes elegir varias):</label>
+        <input type="file" id="fGaleria" accept="image/*" multiple>
         
-        <p class="aviso">📌 Las fotos deben subirse primero a GitHub con el botón "Agregar archivo" → "Subir archivos"</p>
+        <p class="aviso">📌 Selecciona las fotos desde tu computadora y pulsa Guardar</p>
         
         <div style="text-align: center; margin-top: 15px;">
             <button onclick="agregarCorredor()">✅ Guardar</button>
@@ -203,18 +205,23 @@
 </div>
 
 <script>
-let corredores = [
-    {
-        numero: 1,
-        nombre: "Nombre del Corredor",
-        categoria: "5km Libre",
-        equipo: "Nombre del Equipo",
-        tiempo: "00:00 min",
-        fotoPerfil: "foto_perfil.jpg",
-        galeria: ["foto1.jpg", "foto2.jpg"]
-    }
-];
+// Los corredores se guardan aquí con las fotos cargadas
+let corredores = [];
 
+// Cargar datos guardados al abrir la página
+function cargarGuardados() {
+    const guardados = localStorage.getItem('corredores');
+    if (guardados) {
+        corredores = JSON.parse(guardados);
+    }
+}
+cargarGuardados();
+
+function guardarDatos() {
+    localStorage.setItem('corredores', JSON.stringify(corredores));
+}
+
+// Mostrar/Ocultar formulario
 function mostrarFormulario() {
     document.getElementById('formAgregar').style.display = 'block';
 }
@@ -232,31 +239,46 @@ function limpiarFormulario() {
     document.getElementById('fGaleria').value = '';
 }
 
-function agregarCorredor() {
+// Convertir archivo a imagen que se puede guardar
+function archivoAImagen(archivo) {
+    return new Promise((resolver) => {
+        const lector = new FileReader();
+        lector.onload = (e) => resolver(e.target.result);
+        lector.readAsDataURL(archivo);
+    });
+}
+
+// Agregar nuevo corredor con fotos
+async function agregarCorredor() {
     const num = parseInt(document.getElementById('fNumero').value);
     const nombre = document.getElementById('fNombre').value.trim();
     const cat = document.getElementById('fCategoria').value.trim();
     const equipo = document.getElementById('fEquipo').value.trim();
     const tiempo = document.getElementById('fTiempo').value.trim();
-    const fotoPerfil = document.getElementById('fFotoPerfil').value.trim();
-    const galeriaTexto = document.getElementById('fGaleria').value.trim();
+    const archivoPerfil = document.getElementById('fFotoPerfil').files[0];
+    const archivosGaleria = document.getElementById('fGaleria').files;
 
-    if (!num || !nombre || !fotoPerfil) {
+    if (!num || !nombre || !archivoPerfil) {
         alert('⚠️ Completa al menos: Número, Nombre y Foto de Perfil');
         return;
     }
 
-    const existe = corredores.some(c => c.numero === num);
-    if (existe) {
+    // Verificar si ya existe
+    if (corredores.some(c => c.numero === num)) {
         alert('⚠️ Ya existe un corredor con el número ' + num);
         return;
     }
 
-    let galeria = [];
-    if (galeriaTexto) {
-        galeria = galeriaTexto.split(',').map(f => f.trim()).filter(f => f);
+    // Convertir foto de perfil
+    const fotoPerfil = await archivoAImagen(archivoPerfil);
+
+    // Convertir fotos de galería
+    const galeria = [];
+    for (let i = 0; i < archivosGaleria.length; i++) {
+        galeria.push(await archivoAImagen(archivosGaleria[i]));
     }
 
+    // Agregar a la lista
     corredores.push({
         numero: num,
         nombre: nombre,
@@ -267,9 +289,9 @@ function agregarCorredor() {
         galeria: galeria
     });
 
+    guardarDatos();
     alert('✅ Guardado correctamente!\nBusca con el número: ' + num);
     ocultarFormulario();
-    console.log('📋 Copia esto en tu código:', JSON.stringify(corredores, null, 4));
 }
 
 function buscarCorredor() {
