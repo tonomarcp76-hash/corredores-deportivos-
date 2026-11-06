@@ -93,7 +93,6 @@
             border-left: 4px solid #00ffcc;
         }
         .metodo h3 { margin-bottom: 10px; }
-        .banco { color: #00ffcc; font-weight: bold; }
         
         .mensaje { display: none; text-align: center; padding: 40px; color: #ff6b6b; font-size: 1.2rem; }
     </style>
@@ -116,7 +115,7 @@
     <!-- TARJETA DEL CORREDOR -->
     <div id="tarjeta" class="tarjeta-corredor">
         <div class="info-principal">
-            <img id="fotoPerfil" class="foto-perfil" src="" alt="Foto">
+            <img id="fotoPerfil" class="foto-perfil" src="" alt="Foto del corredor">
             <div class="datos">
                 <h2 id="nombreCorredor"></h2>
                 <p><strong>Número:</strong> <span id="mostrarNumero"></span></p>
@@ -135,7 +134,7 @@
         ⚠️ No hay ningún corredor con ese número
     </div>
 
-    <!-- SECCIÓN DE PAGOS -->
+    <!-- FORMAS DE PAGO -->
     <div class="pago">
         <h2>💳 Formas de Pago</h2>
         
@@ -147,7 +146,7 @@
 
         <div class="metodo">
             <h3>🏦 Transferencia Bancaria</h3>
-            <p class="banco">Banco: BBVA</p>
+            <p><strong>Banco:</strong> BBVA</p>
             <p><strong>Nombre:</strong> Tu Nombre Completo</p>
             <p><strong>Cuenta:</strong> 0123456789</p>
             <p><strong>CLABE:</strong> 012345678901234567</p>
@@ -164,7 +163,7 @@
 
 <script>
 // ==================================================
-// AQUÍ PONES TUS CORREDORES Y TUS FOTOS
+// AQUÍ PONES TUS DATOS Y LOS NOMBRES DE TUS FOTOS
 // ==================================================
 const corredores = [
     {
@@ -173,14 +172,14 @@ const corredores = [
         categoria: "5km Libre",
         equipo: "Nombre del Equipo",
         tiempo: "00:00 min",
-        fotoPerfil: "nombre_de_tu_foto.jpg",  // ← IGUAL AL NOMBRE DEL ARCHIVO
+        fotoPerfil: "foto_perfil.jpg",       // ← PON EL NOMBRE EXACTO DE TU FOTO
         galeria: [
-            "foto1.jpg",
-            "foto2.jpg"
+            "foto1.jpg",                     // ← NOMBRE EXACTO DE TU FOTO
+            "foto2.jpg"                      // ← NOMBRE EXACTO DE TU FOTO
         ]
     }
     // ==================================================
-    // PARA AGREGAR MÁS, COPIA ESTO:
+    // PARA AGREGAR MÁS CORREDORES, COPIA ESTO:
     // ==================================================
     // ,{
     //     numero: 2,
@@ -228,6 +227,7 @@ function buscarCorredor() {
     corredor.galeria.forEach(foto => {
         const img = document.createElement('img');
         img.src = foto;
+        img.alt = "Foto del corredor";
         galeria.appendChild(img);
     });
 
