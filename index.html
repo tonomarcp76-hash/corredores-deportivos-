@@ -52,25 +52,42 @@
             background: rgba(255,255,255,0.1);
             border-radius: 20px;
             padding: 30px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
             display: none;
         }
         .info-principal {
             display: flex;
-            flex-wrap: wrap; gap: 30px; align-items: center; margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 30px;
+            align-items: center;
+            margin-bottom: 30px;
         }
         .foto-perfil {
-            width: 180px; height: 180px; border-radius: 50%;
-            object-fit: cover; border: 4px solid #00ffcc;
+            width: 180px;
+            height: 180px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid #00ffcc;
+            box-shadow: 0 0 20px rgba(0,255,204,0.3);
         }
-        .datos h2 { color: #00ffcc; margin-bottom: 10px; }
-        .datos p { margin: 8px 0; font-size: 1.1rem; }
+        .datos h2 { font-size: 1.8rem; color: #00ffcc; margin-bottom: 10px; }
+        .datos p { font-size: 1.1rem; margin: 8px 0; }
         .galeria { margin-top: 20px; }
         .galeria h3 { color: #00ffcc; margin-bottom: 15px; }
-        .fotos { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 15px; }
-        .fotos img {
-            width: 100%; height: 150px; object-fit: cover; border-radius: 10px;
+        .fotos {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
         }
-        .mensaje { display: none; text-align: center; padding: 40px; color: #ff6b6b; font-size: 1.2rem; }
+        .fotos img {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 10px;
+            border: 2px solid transparent;
+        }
+        .mensaje { text-align: center; padding: 40px 20px; font-size: 1.2rem; color: #ff6b6b; display: none; }
     </style>
 </head>
 <body>
@@ -89,7 +106,7 @@
 
     <div id="tarjeta" class="tarjeta-corredor">
         <div class="info-principal">
-            <img id="fotoPerfil" class="foto-perfil" src="" alt="Foto">
+            <img id="fotoPerfil" class="foto-perfil" src="" alt="Foto del corredor">
             <div class="datos">
                 <h2 id="nombreCorredor"></h2>
                 <p><strong>Número:</strong> <span id="mostrarNumero"></span></p>
@@ -99,7 +116,7 @@
             </div>
         </div>
         <div class="galeria">
-            <h3>📸 Fotos del Corredor</h3>
+            <h3>📸 Galería de Fotos</h3>
             <div id="fotosGaleria" class="fotos"></div>
         </div>
     </div>
@@ -110,46 +127,35 @@
 </div>
 
 <script>
-// =============================================
-// AQUÍ PONES TUS CORREDORES Y TUS FOTOS
-// =============================================
+// ==================================================
+// AQUÍ PONES TUS DATOS Y TUS FOTOS REALES
+// ==================================================
 const corredores = [
     {
         numero: 1,
-        nombre: "Juan Pérez",
+        nombre: "Nombre del Corredor",
         categoria: "5km Libre",
-        equipo: "Velocidad CDMX",
-        tiempo: "18:45 min",
-        fotoPerfil: "juan_perfil.jpg",        // ← IGUAL AL NOMBRE DEL ARCHIVO
+        equipo: "Nombre del Equipo",
+        tiempo: "00:00 min",
+        fotoPerfil: "nombre_de_tu_foto.jpg",
         galeria: [
-            "juan_carrera1.jpg",
-            "juan_carrera2.jpg"
-        ]
-    },
-    {
-        numero: 2,
-        nombre: "María López",
-        categoria: "10km Femenil",
-        equipo: "Corredoras del Sol",
-        tiempo: "42:10 min",
-        fotoPerfil: "maria_perfil.jpg",       // ← IGUAL AL NOMBRE DEL ARCHIVO
-        galeria: [
-            "maria_carrera1.jpg"
+            "foto1.jpg",
+            "foto2.jpg"
         ]
     }
-    // ============================================
-    // PARA AGREGAR OTRO, COPIA ESTO Y LLÉNALO:
-    // ============================================
+    // ==================================================
+    // PARA AGREGAR MÁS CORREDORES, COPIA ESTO:
+    // ==================================================
     // ,{
-    //     numero: 3,
+    //     numero: 2,
     //     nombre: "Nombre Completo",
     //     categoria: "Categoría",
     //     equipo: "Equipo",
     //     tiempo: "00:00 min",
-    //     fotoPerfil: "foto_perfil.jpg",
+    //     fotoPerfil: "perfil2.jpg",
     //     galeria: [
-    //         "foto1.jpg",
-    //         "foto2.jpg"
+    //         "fotoA.jpg",
+    //         "fotoB.jpg"
     //     ]
     // }
 ];
@@ -162,7 +168,10 @@ function buscarCorredor() {
     tarjeta.style.display = 'none';
     aviso.style.display = 'none';
 
-    if (!num) return alert('Escribe un número');
+    if (!num) {
+        alert('Escribe un número válido');
+        return;
+    }
 
     const corredor = corredores.find(c => c.numero === num);
 
