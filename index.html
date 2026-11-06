@@ -52,58 +52,25 @@
             background: rgba(255,255,255,0.1);
             border-radius: 20px;
             padding: 30px;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255,255,255,0.2);
             display: none;
         }
         .info-principal {
             display: flex;
-            flex-wrap: wrap;
-            gap: 30px;
-            align-items: center;
-            margin-bottom: 30px;
+            flex-wrap: wrap; gap: 30px; align-items: center; margin-bottom: 30px;
         }
         .foto-perfil {
-            width: 180px;
-            height: 180px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 4px solid #00ffcc;
-            box-shadow: 0 0 20px rgba(0,255,204,0.3);
+            width: 180px; height: 180px; border-radius: 50%;
+            object-fit: cover; border: 4px solid #00ffcc;
         }
-        .datos h2 { font-size: 1.8rem; color: #00ffcc; margin-bottom: 10px; }
-        .datos p { font-size: 1.1rem; margin: 8px 0; }
-        .etiqueta {
-            display: inline-block;
-            background: #00ffcc;
-            color: #0f2027;
-            padding: 5px 15px;
-            border-radius: 20px;
-            font-weight: bold;
-            margin-left: 10px;
-        }
+        .datos h2 { color: #00ffcc; margin-bottom: 10px; }
+        .datos p { margin: 8px 0; font-size: 1.1rem; }
         .galeria { margin-top: 20px; }
         .galeria h3 { color: #00ffcc; margin-bottom: 15px; }
-        .fotos {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 15px;
-        }
+        .fotos { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 15px; }
         .fotos img {
-            width: 100%;
-            height: 150px;
-            object-fit: cover;
-            border-radius: 10px;
-            cursor: pointer;
-            transition: transform 0.3s;
-            border: 2px solid transparent;
+            width: 100%; height: 150px; object-fit: cover; border-radius: 10px;
         }
-        .fotos img:hover {
-            transform: scale(1.05);
-            border-color: #00ffcc;
-        }
-        .mensaje { text-align: center; padding: 40px 20px; font-size: 1.2rem; color: #ff6b6b; display: none; }
-        .ejemplos { margin-top: 20px; font-size: 0.9rem; color: #aaa; }
+        .mensaje { display: none; text-align: center; padding: 40px; color: #ff6b6b; font-size: 1.2rem; }
     </style>
 </head>
 <body>
@@ -111,82 +78,78 @@
 <div class="container">
     <header>
         <h1>🏃 ENCUENTRA A TU CORREDOR</h1>
-        <p>Ingresa el número y descubre su información</p>
+        <p>Escribe tu número y ve tus fotos</p>
     </header>
 
     <div class="buscador">
-        <h2>🔍 Buscar Corredor</h2>
-        <input type="number" id="numCorredor" placeholder="Número" min="1">
-        <button onclick="buscarCorredor()">🔎 Buscar</button>
-        <p class="ejemplos">Ejemplos: 1, 2, 3, 4, 5</p>
+        <h2>🔍 Buscar por Número</h2>
+        <input type="number" id="numCorredor" placeholder="Tu número" min="1">
+        <button onclick="buscarCorredor()">Buscar</button>
     </div>
 
     <div id="tarjeta" class="tarjeta-corredor">
         <div class="info-principal">
-            <img id="fotoPerfil" class="foto-perfil" src="" alt="Foto del corredor">
+            <img id="fotoPerfil" class="foto-perfil" src="" alt="Foto">
             <div class="datos">
                 <h2 id="nombreCorredor"></h2>
-                <p><strong>Número:</strong> <span id="mostrarNumero"></span> <span class="etiqueta">ACTIVO</span></p>
+                <p><strong>Número:</strong> <span id="mostrarNumero"></span></p>
                 <p><strong>Categoría:</strong> <span id="categoria"></span></p>
                 <p><strong>Equipo:</strong> <span id="equipo"></span></p>
                 <p><strong>Tiempo:</strong> <span id="tiempo"></span></p>
             </div>
         </div>
-
         <div class="galeria">
-            <h3>📸 Galería de Imágenes</h3>
+            <h3>📸 Fotos del Corredor</h3>
             <div id="fotosGaleria" class="fotos"></div>
         </div>
     </div>
 
-    <div id="mensajeNoEncontrado" class="mensaje">
-        ⚠️ No existe ningún corredor con ese número
+    <div id="noEncontrado" class="mensaje">
+        ⚠️ No hay ningún corredor con ese número
     </div>
 </div>
 
 <script>
-// ==================================================
-// AQUÍ PONES TUS DATOS Y TUS FOTOS REALES
-// ==================================================
+// =============================================
+// AQUÍ PONES TUS CORREDORES Y TUS FOTOS
+// =============================================
 const corredores = [
     {
         numero: 1,
-        nombre: "Nombre del Corredor 1",
+        nombre: "Juan Pérez",
         categoria: "5km Libre",
-        equipo: "Nombre de su Equipo",
+        equipo: "Velocidad CDMX",
         tiempo: "18:45 min",
-        fotoPerfil: "corredor1-perfil.jpg",
+        fotoPerfil: "juan_perfil.jpg",        // ← IGUAL AL NOMBRE DEL ARCHIVO
         galeria: [
-            "corredor1-foto1.jpg",
-            "corredor1-foto2.jpg",
-            "corredor1-foto3.jpg"
+            "juan_carrera1.jpg",
+            "juan_carrera2.jpg"
         ]
     },
     {
         numero: 2,
-        nombre: "Nombre del Corredor 2",
+        nombre: "María López",
         categoria: "10km Femenil",
-        equipo: "Nombre de su Equipo",
+        equipo: "Corredoras del Sol",
         tiempo: "42:10 min",
-        fotoPerfil: "corredor2-perfil.jpg",
+        fotoPerfil: "maria_perfil.jpg",       // ← IGUAL AL NOMBRE DEL ARCHIVO
         galeria: [
-            "corredor2-foto1.jpg",
-            "corredor2-foto2.jpg"
+            "maria_carrera1.jpg"
         ]
     }
-    // ==================================================
-    // PARA AGREGAR MÁS CORREDORES, COPIA ESTO:
-    // ==================================================
+    // ============================================
+    // PARA AGREGAR OTRO, COPIA ESTO Y LLÉNALO:
+    // ============================================
     // ,{
     //     numero: 3,
     //     nombre: "Nombre Completo",
     //     categoria: "Categoría",
     //     equipo: "Equipo",
     //     tiempo: "00:00 min",
-    //     fotoPerfil: "corredor3-perfil.jpg",
+    //     fotoPerfil: "foto_perfil.jpg",
     //     galeria: [
-    //         "corredor3-foto1.jpg",
-    //         "corredor3-foto2.jpg"
+    //         "foto1.jpg",
+    //         "foto2.jpg"
     //     ]
     // }
 ];
@@ -194,15 +157,12 @@ const corredores = [
 function buscarCorredor() {
     const num = parseInt(document.getElementById('numCorredor').value);
     const tarjeta = document.getElementById('tarjeta');
-    const aviso = document.getElementById('mensajeNoEncontrado');
+    const aviso = document.getElementById('noEncontrado');
 
     tarjeta.style.display = 'none';
     aviso.style.display = 'none';
 
-    if (!num) {
-        alert('Escribe un número válido');
-        return;
-    }
+    if (!num) return alert('Escribe un número');
 
     const corredor = corredores.find(c => c.numero === num);
 
@@ -218,19 +178,18 @@ function buscarCorredor() {
     document.getElementById('equipo').textContent = corredor.equipo;
     document.getElementById('tiempo').textContent = corredor.tiempo;
 
-    const contenedorGaleria = document.getElementById('fotosGaleria');
-    contenedorGaleria.innerHTML = '';
+    const galeria = document.getElementById('fotosGaleria');
+    galeria.innerHTML = '';
     corredor.galeria.forEach(foto => {
         const img = document.createElement('img');
         img.src = foto;
-        img.alt = "Imagen del corredor";
-        contenedorGaleria.appendChild(img);
+        galeria.appendChild(img);
     });
 
     tarjeta.style.display = 'block';
 }
 
-document.getElementById('numCorredor').addEventListener('keypress', function(e) {
+document.getElementById('numCorredor').addEventListener('keypress', e => {
     if (e.key === 'Enter') buscarCorredor();
 });
 </script>
