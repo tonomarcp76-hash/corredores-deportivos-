@@ -145,88 +145,62 @@
 </div>
 
 <script>
-// BASE DE DATOS DE CORREDORES — AGREGA, EDITA O ELIMINA AQUÍ
+// ==================================================
+// AQUÍ EDITAS LOS CORREDORES Y TUS FOTOS
+// ==================================================
 const corredores = [
     {
         numero: 1,
-        nombre: "Carlos Méndez",
+        nombre: "Nombre del Corredor 1",
         categoria: "5km Libre",
-        equipo: "Velocidad CDMX",
+        equipo: "Nombre de su Equipo",
         tiempo: "18:45 min",
-        fotoPerfil: "https://picsum.photos/id/1012/300/300",
+        fotoPerfil: "corredor1-perfil.jpg",        // 👈 Tu foto de perfil
         galeria: [
-            "https://picsum.photos/id/1012/400/300",
-            "https://picsum.photos/id/1005/400/300",
-            "https://picsum.photos/id/1025/400/300",
-            "https://picsum.photos/id/1035/400/300"
+            "corredor1-foto1.jpg",                 // 👈 Tu foto 1
+            "corredor1-foto2.jpg",                 // 👈 Tu foto 2
+            "corredor1-foto3.jpg"                  // 👈 Tu foto 3
         ]
     },
     {
         numero: 2,
-        nombre: "Ana Rodríguez",
+        nombre: "Nombre del Corredor 2",
         categoria: "10km Femenil",
-        equipo: "Corredoras del Sol",
+        equipo: "Nombre de su Equipo",
         tiempo: "42:10 min",
-        fotoPerfil: "https://picsum.photos/id/1027/300/300",
+        fotoPerfil: "corredor2-perfil.jpg",
         galeria: [
-            "https://picsum.photos/id/1027/400/300",
-            "https://picsum.photos/id/1011/400/300",
-            "https://picsum.photos/id/1000/400/300"
+            "corredor2-foto1.jpg",
+            "corredor2-foto2.jpg"
         ]
     },
     {
         numero: 3,
-        nombre: "Roberto Sánchez",
+        nombre: "Nombre del Corredor 3",
         categoria: "10km Libre",
-        equipo: "Atletismo México",
+        equipo: "Nombre de su Equipo",
         tiempo: "38:22 min",
-        fotoPerfil: "https://picsum.photos/id/1019/300/300",
+        fotoPerfil: "corredor3-perfil.jpg",
         galeria: [
-            "https://picsum.photos/id/1019/400/300",
-            "https://picsum.photos/id/1024/400/300",
-            "https://picsum.photos/id/1036/400/300",
-            "https://picsum.photos/id/1040/400/300",
-            "https://picsum.photos/id/1048/400/300"
-        ]
-    },
-    {
-        numero: 4,
-        nombre: "Laura Jiménez",
-        categoria: "5km Femenil",
-        equipo: "Estrellas del Aire",
-        tiempo: "21:05 min",
-        fotoPerfil: "https://picsum.photos/id/1062/300/300",
-        galeria: [
-            "https://picsum.photos/id/1062/400/300",
-            "https://picsum.photos/id/1054/400/300",
-            "https://picsum.photos/id/1063/400/300"
-        ]
-    },
-    {
-        numero: 5,
-        nombre: "Miguel Ángel López",
-        categoria: "Medio Maratón",
-        equipo: "Fuerza y Pasión",
-        tiempo: "1h 18min",
-        fotoPerfil: "https://picsum.photos/id/1006/300/300",
-        galeria: [
-            "https://picsum.photos/id/1006/400/300",
-            "https://picsum.photos/id/1009/400/300",
-            "https://picsum.photos/id/1015/400/300",
-            "https://picsum.photos/id/1022/400/300"
+            "corredor3-foto1.jpg",
+            "corredor3-foto2.jpg",
+            "corredor3-foto3.jpg",
+            "corredor3-foto4.jpg"
         ]
     }
-    // SIGUE EL MISMO FORMATO PARA AGREGAR MÁS:
+    // ==================================================
+    // PARA AGREGAR MÁS, COPIA Y PEGA ESTE BLOQUE:
+    // ==================================================
     // ,{
-    //     numero: 6,
+    //     numero: 4,
     //     nombre: "Nombre Completo",
     //     categoria: "Categoría",
-    //     equipo: "Nombre del Equipo",
+    //     equipo: "Equipo",
     //     tiempo: "00:00 min",
-    //     fotoPerfil: "enlace_foto_perfil.jpg",
+    //     fotoPerfil: "corredor4-perfil.jpg",
     //     galeria: [
-    //         "enlace_foto1.jpg",
-    //         "enlace_foto2.jpg"
+    //         "corredor4-foto1.jpg",
+    //         "corredor4-foto2.jpg"
     //     ]
     // }
 ];
@@ -236,7 +210,6 @@ function buscarCorredor() {
     const tarjeta = document.getElementById('tarjeta');
     const aviso = document.getElementById('mensajeNoEncontrado');
 
-    // Ocultar todo primero
     tarjeta.style.display = 'none';
     aviso.style.display = 'none';
 
@@ -245,7 +218,6 @@ function buscarCorredor() {
         return;
     }
 
-    // Buscar corredor
     const corredor = corredores.find(c => c.numero === num);
 
     if (!corredor) {
@@ -253,7 +225,6 @@ function buscarCorredor() {
         return;
     }
 
-    // Mostrar datos
     document.getElementById('fotoPerfil').src = corredor.fotoPerfil;
     document.getElementById('nombreCorredor').textContent = corredor.nombre;
     document.getElementById('mostrarNumero').textContent = corredor.numero;
@@ -261,7 +232,6 @@ function buscarCorredor() {
     document.getElementById('equipo').textContent = corredor.equipo;
     document.getElementById('tiempo').textContent = corredor.tiempo;
 
-    // Cargar galería
     const contenedorGaleria = document.getElementById('fotosGaleria');
     contenedorGaleria.innerHTML = '';
     corredor.galeria.forEach(foto => {
@@ -271,11 +241,9 @@ function buscarCorredor() {
         contenedorGaleria.appendChild(img);
     });
 
-    // Mostrar tarjeta
     tarjeta.style.display = 'block';
 }
 
-// Permitir buscar con la tecla Enter
 document.getElementById('numCorredor').addEventListener('keypress', function(e) {
     if (e.key === 'Enter') buscarCorredor();
 });
