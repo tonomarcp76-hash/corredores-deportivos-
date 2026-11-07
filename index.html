@@ -116,7 +116,6 @@
         
         .mensaje { display: none; text-align: center; padding: 40px 20px; color: #ff6b6b; font-size: 1.1rem; }
         .exito { color: #00ffcc; text-align: center; margin-top: 15px; display: none; font-size: 1.2rem; }
-        .aviso { background: rgba(0,0,0,0.3); padding: 12px; border-radius: 10px; margin: 15px 0; font-size: 0.9rem; }
         .oculto { display: none !important; }
     </style>
 </head>
@@ -165,7 +164,7 @@
         <label>📷 Foto de Perfil:</label>
         <input type="file" id="fotoPerfilArchivo" accept="image/*">
         
-        <label>📸 Fotos de la Galería (puedes elegir varias):</label>
+        <label>📸 Fotos de la Galería (varias):</label>
         <input type="file" id="galeriaArchivos" accept="image/*" multiple>
         
         <div class="progreso" id="cajaProgreso">
@@ -211,20 +210,16 @@
         <div class="metodo">
             <h3>💳 Tarjeta de Crédito / Débito</h3>
             <p>Paga con cualquier tarjeta VISA, Mastercard o AMEX de forma segura.</p>
-            <p><strong>Pasos:</strong> Selecciona "Pagar con Tarjeta" e ingresa los datos.</p>
         </div>
         <div class="metodo">
             <h3>🏦 Transferencia Bancaria</h3>
             <p><strong>Banco:</strong> BBVA México</p>
-            <p><strong>Titular:</strong> Tu Nombre Completo</p>
             <p><strong>Cuenta:</strong> 0123456789</p>
             <p><strong>CLABE:</strong> 012345678901234567</p>
-            <p><strong>Concepto:</strong> Inscripción — Número del corredor</p>
         </div>
         <div class="metodo">
             <h3>📱 Otras Opciones</h3>
             <p>Mercado Pago / PayPal / Efectivo en puntos autorizados</p>
-            <p><strong>Comprobante:</strong> Envía tu comprobante a: inscripciones@tucorreo.com</p>
         </div>
     </div>
 </div>
@@ -307,8 +302,8 @@ function limpiarFormulario() {
     document.getElementById('barraProgreso').style.width = '0%';
 }
 
-async function subirArchivo(archivo, ruta, numeroCorredor) {
-    const ref = storage.ref(`corredores/${numeroCorredor}/${ruta}`);
+async function subirArchivo(archivo, ruta) {
+    const ref = storage.ref(ruta);
     const snapshot = await ref.put(archivo);
     return await snapshot.ref.getDownloadURL();
 }
@@ -345,20 +340,19 @@ async function guardarCorredor() {
         }
 
         // Subir foto de perfil
-        const fotoPerfilUrl = await subirArchivo(fotoPerfilArchivo, `perfil_${num}.jpg`, num);
+        const fotoPerfilUrl = await subirArchivo(fotoPerfilArchivo, `corredores/${num}/perfil.jpg`);
         document.getElementById('barraProgreso').style.width = '50%';
 
         // Subir fotos de galería
         const galeriaUrls = [];
         for (let i = 0; i < galeriaArchivos.length; i++) {
-            const url = await subirArchivo(galeriaArchivos[i], `galeria_${num}_${i}.jpg`, num);
+            const url = await subirArchivo(galeriaArchivos[i], `corredores/${num}/foto_${i}.jpg`);
             galeriaUrls.push(url);
         }
         document.getElementById('barraProgreso').style.width = '100%';
 
         // Guardar datos en Firestore
         await coleccion.add({
-            numero: num
             numero: num,
             nombre: nombre,
             categoria: cat || 'Sin categoría',
@@ -376,8 +370,7 @@ async function guardarCorredor() {
         console.error(error);
         alert('❌ Error: ' + error.message);
     }
-
-    btn.classList.remove('cargando');
+        btn.classList.remove('cargando');
     btn.textContent = '✅ Guardar';
 }
 
@@ -448,5 +441,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
 </body>
 </html>
+
 
 
