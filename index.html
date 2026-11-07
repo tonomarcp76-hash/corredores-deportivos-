@@ -4,6 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>🏃 Encuentra a tu Corredor</title>
+    <!-- Firebase SOLO para guardar los datos (GRATIS sin actualizar) -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif; }
         body {
@@ -14,30 +18,27 @@
         }
         .container { max-width: 900px; margin: 0 auto; }
         header { text-align: center; padding: 30px 0; }
-        header h1 { font-size: 2.2rem; color: #00ffcc; text-shadow: 0 0 15px rgba(0,255,204,0.4); }
+        header h1 { font-size: 2rem; color: #00ffcc; text-shadow: 0 0 15px rgba(0,255,204,0.4); }
         
         .buscador, .form-agregar {
             background: rgba(255,255,255,0.1);
-            padding: 30px;
+            padding: 25px;
             border-radius: 15px;
             text-align: center;
-            margin-bottom: 30px;
+            margin-bottom: 25px;
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255,255,255,0.2);
         }
         .form-agregar { display: none; text-align: left; }
         .form-agregar h3 { color: #00ffcc; margin-bottom: 20px; text-align: center; }
         .form-agregar label { display: block; margin: 12px 0 5px; font-weight: bold; }
-        .form-agregar input[type="text"],
-        .form-agregar input[type="number"] { 
+        .form-agregar input { 
             width: 100%; margin: 0 0 10px; 
             padding: 12px 15px; border-radius: 10px; border: none;
             background: rgba(255,255,255,0.95); color: #0f2027;
         }
         .form-agregar input[type="file"] {
-            width: 100%; padding: 10px; margin: 5px 0 15px;
-            background: rgba(255,255,255,0.1); border-radius: 8px;
-            border: 1px dashed #00ffcc; color: #fff;
+            background: rgba(255,255,255,0.1); border: 1px dashed #00ffcc; color: #fff;
         }
         
         button {
@@ -54,37 +55,38 @@
         }
         button:hover { transform: translateY(-2px); box-shadow: 0 5px 20px rgba(0,255,204,0.4); }
         .btn-rojo { background: #ff6b6b; color: #fff; }
+        .cargando { opacity: 0.6; pointer-events: none; }
         
         .tarjeta-corredor {
             background: rgba(255,255,255,0.1);
+            padding: 25px;
             border-radius: 20px;
-            padding: 30px;
-            margin-bottom: 30px;
+            margin-bottom: 25px;
             display: none;
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255,255,255,0.2);
         }
         .info-principal {
             display: flex;
-            flex-wrap: wrap; gap: 30px; align-items: center; margin-bottom: 20px;
+            flex-wrap: wrap; gap: 25px; align-items: center; justify-content: center; text-align: center;
         }
         .foto-perfil {
-            width: 180px; height: 180px; border-radius: 50%;
+            width: 160px; height: 160px; border-radius: 50%;
             object-fit: cover; border: 4px solid #00ffcc;
         }
         .datos h2 { color: #00ffcc; margin-bottom: 10px; }
-        .datos p { margin: 8px 0; font-size: 1.1rem; }
+        .datos p { margin: 6px 0; font-size: 1rem; }
         
         .galeria { margin-top: 20px; }
-        .galeria h3 { color: #00ffcc; margin-bottom: 15px; }
-        .fotos { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 15px; }
+        .galeria h3 { color: #00ffcc; margin-bottom: 15px; text-align: center; }
+        .fotos { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; }
         .fotos img {
-            width: 100%; height: 150px; object-fit: cover; border-radius: 10px;
+            width: 100%; height: 120px; object-fit: cover; border-radius: 10px;
         }
         
         .pago {
             background: rgba(255,255,255,0.1);
-            padding: 30px;
+            padding: 25px;
             border-radius: 15px;
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255,255,255,0.2);
@@ -92,14 +94,15 @@
         .pago h2 { color: #00ffcc; margin-bottom: 20px; text-align: center; }
         .metodo {
             background: rgba(0,0,0,0.2);
-            padding: 20px;
+            padding: 18px;
             border-radius: 12px;
-            margin-bottom: 15px;
+            margin-bottom: 12px;
             border-left: 4px solid #00ffcc;
         }
         
-        .mensaje { display: none; text-align: center; padding: 40px; color: #ff6b6b; font-size: 1.2rem; }
-        .aviso { font-size: 0.9rem; color: #aaa; margin-top: 10px; }
+        .mensaje { display: none; text-align: center; padding: 40px 20px; color: #ff6b6b; font-size: 1.1rem; }
+        .exito { color: #00ffcc; text-align: center; margin-top: 15px; display: none; }
+        .aviso { background: rgba(0,0,0,0.3); padding: 12px; border-radius: 10px; margin: 15px 0; font-size: 0.9rem; }
     </style>
 </head>
 <body>
@@ -110,16 +113,19 @@
         <p>Escribe tu número y ve tus fotos</p>
     </header>
 
-    <!-- BOTÓN PRINCIPAL -->
     <div style="text-align: center; margin-bottom: 20px;">
-        <button id="btnMostrarForm" onclick="mostrarFormulario()">📷 Subir Fotos</button>
+        <button id="btnAgregar" onclick="mostrarFormulario()">📷 Registrar Corredor</button>
     </div>
 
-    <!-- FORMULARIO PARA SUBIR FOTOS DIRECTAMENTE -->
+    <!-- FORMULARIO -->
     <div id="formAgregar" class="form-agregar">
-        <h3>📷 Subir Fotos / Registrar Corredor</h3>
+        <h3>📋 Registrar Nuevo Corredor</h3>
         
-        <label>Número del Corredor:</label>
+        <div class="aviso">
+            💡 <strong>Importante:</strong> Sube tus fotos a tu carpeta de GitHub y escribe el nombre del archivo aquí.
+        </div>
+        
+        <label>Número:</label>
         <input type="number" id="fNumero" min="1" placeholder="Ej: 1">
         
         <label>Nombre Completo:</label>
@@ -134,18 +140,17 @@
         <label>Tiempo:</label>
         <input type="text" id="fTiempo" placeholder="Ej: 18:45 min">
         
-        <label>📷 Foto de Perfil:</label>
-        <input type="file" id="fFotoPerfil" accept="image/*">
+        <label>📷 Nombre de tu Foto de Perfil (ej: perfil1.jpg):</label>
+        <input type="text" id="fFotoPerfil" placeholder="perfil1.jpg">
         
-        <label>📸 Fotos de la Galería (puedes elegir varias):</label>
-        <input type="file" id="fGaleria" accept="image/*" multiple>
-        
-        <p class="aviso">📌 Selecciona las fotos desde tu computadora y pulsa Guardar</p>
+        <label>📸 Nombres de Fotos de la Galería (separa con coma: foto1.jpg, foto2.jpg):</label>
+        <input type="text" id="fGaleria" placeholder="foto1.jpg, foto2.jpg">
         
         <div style="text-align: center; margin-top: 15px;">
-            <button onclick="agregarCorredor()">✅ Guardar</button>
+            <button id="btnGuardar" onclick="guardarCorredor()">✅ Guardar</button>
             <button class="btn-rojo" onclick="ocultarFormulario()">❌ Cancelar</button>
         </div>
+        <p id="mensajeExito" class="exito">✅ ¡Guardado! Recuerda subir las fotos a GitHub con los nombres que escribiste</p>
     </div>
 
     <!-- BUSCADOR -->
@@ -155,7 +160,7 @@
         <button onclick="buscarCorredor()">Buscar</button>
     </div>
 
-    <!-- TARJETA DEL CORREDOR -->
+    <!-- TARJETA -->
     <div id="tarjeta" class="tarjeta-corredor">
         <div class="info-principal">
             <img id="fotoPerfil" class="foto-perfil" src="" alt="Foto del corredor">
@@ -205,25 +210,28 @@
 </div>
 
 <script>
-// Los corredores se guardan aquí con las fotos cargadas
-let corredores = [];
+// ==================================================
+// TUS DATOS DE FIREBASE YA CONFIGURADOS
+// ==================================================
+const firebaseConfig = {
+  apiKey: "AIzaSyDyeTJpaehpLtdaNj0QD293SVl9g0FQc",
+  authDomain: "corredores-deportivos.firebaseapp.com",
+  projectId: "corredores-deportivos",
+  storageBucket: "corredores-deportivos.firebasestorage.app",
+  messagingSenderId: "426728020732",
+  appId: "1:426728020732:web:593ff2be0ef962afccd579"
+};
 
-// Cargar datos guardados al abrir la página
-function cargarGuardados() {
-    const guardados = localStorage.getItem('corredores');
-    if (guardados) {
-        corredores = JSON.parse(guardados);
-    }
-}
-cargarGuardados();
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+const coleccion = db.collection('corredores');
 
-function guardarDatos() {
-    localStorage.setItem('corredores', JSON.stringify(corredores));
-}
-
-// Mostrar/Ocultar formulario
+// ==================================================
+// FUNCIONES
+// ==================================================
 function mostrarFormulario() {
     document.getElementById('formAgregar').style.display = 'block';
+    document.getElementById('mensajeExito').style.display = 'none';
 }
 function ocultarFormulario() {
     document.getElementById('formAgregar').style.display = 'none';
@@ -239,62 +247,65 @@ function limpiarFormulario() {
     document.getElementById('fGaleria').value = '';
 }
 
-// Convertir archivo a imagen que se puede guardar
-function archivoAImagen(archivo) {
-    return new Promise((resolver) => {
-        const lector = new FileReader();
-        lector.onload = (e) => resolver(e.target.result);
-        lector.readAsDataURL(archivo);
-    });
-}
-
-// Agregar nuevo corredor con fotos
-async function agregarCorredor() {
+// Guardar corredor
+async function guardarCorredor() {
     const num = parseInt(document.getElementById('fNumero').value);
     const nombre = document.getElementById('fNombre').value.trim();
     const cat = document.getElementById('fCategoria').value.trim();
     const equipo = document.getElementById('fEquipo').value.trim();
     const tiempo = document.getElementById('fTiempo').value.trim();
-    const archivoPerfil = document.getElementById('fFotoPerfil').files[0];
-    const archivosGaleria = document.getElementById('fGaleria').files;
+    const fotoPerfil = document.getElementById('fFotoPerfil').value.trim();
+    const galeriaTexto = document.getElementById('fGaleria').value.trim();
 
-    if (!num || !nombre || !archivoPerfil) {
+    if (!num || !nombre || !fotoPerfil) {
         alert('⚠️ Completa al menos: Número, Nombre y Foto de Perfil');
         return;
     }
 
-    // Verificar si ya existe
-    if (corredores.some(c => c.numero === num)) {
-        alert('⚠️ Ya existe un corredor con el número ' + num);
-        return;
+    const galeriaLista = galeriaTexto 
+        ? galeriaTexto.split(',').map(f => f.trim()).filter(f => f)
+        : [];
+
+    const btn = document.getElementById('btnGuardar');
+    btn.classList.add('cargando');
+    btn.textContent = 'Guardando...';
+
+    try {
+        // Verificar duplicado
+        const existe = await coleccion.where('numero', '==', num).get();
+        if (!existe.empty) {
+            alert('⚠️ Ya existe el corredor #' + num);
+            btn.classList.remove('cargando');
+            btn.textContent = '✅ Guardar';
+            return;
+        }
+
+        // Guardar en Firebase
+        await coleccion.add({
+            numero: num,
+            nombre: nombre,
+            categoria: cat || 'Sin categoría',
+            equipo: equipo || 'Sin equipo',
+            tiempo: tiempo || '00:00 min',
+            fotoPerfil: fotoPerfil,
+            galeria: galeriaLista,
+            creado: firebase.firestore.FieldValue.serverTimestamp()
+        });
+
+        document.getElementById('mensajeExito').style.display = 'block';
+        setTimeout(ocultarFormulario, 3000);
+
+    } catch (error) {
+        console.error(error);
+        alert('❌ Error: ' + error.message);
     }
 
-    // Convertir foto de perfil
-    const fotoPerfil = await archivoAImagen(archivoPerfil);
-
-    // Convertir fotos de galería
-    const galeria = [];
-    for (let i = 0; i < archivosGaleria.length; i++) {
-        galeria.push(await archivoAImagen(archivosGaleria[i]));
-    }
-
-    // Agregar a la lista
-    corredores.push({
-        numero: num,
-        nombre: nombre,
-        categoria: cat || 'Sin categoría',
-        equipo: equipo || 'Sin equipo',
-        tiempo: tiempo || '00:00 min',
-        fotoPerfil: fotoPerfil,
-        galeria: galeria
-    });
-
-    guardarDatos();
-    alert('✅ Guardado correctamente!\nBusca con el número: ' + num);
-    ocultarFormulario();
+    btn.classList.remove('cargando');
+    btn.textContent = '✅ Guardar';
 }
 
-function buscarCorredor() {
+// Buscar corredor
+async function buscarCorredor() {
     const num = parseInt(document.getElementById('numCorredor').value);
     const tarjeta = document.getElementById('tarjeta');
     const aviso = document.getElementById('noEncontrado');
@@ -307,25 +318,28 @@ function buscarCorredor() {
         return;
     }
 
-    const corredor = corredores.find(c => c.numero === num);
-
-    if (!corredor) {
+    const snap = await coleccion.where('numero', '==', num).get();
+    
+    if (snap.empty) {
         aviso.style.display = 'block';
         return;
     }
 
-    document.getElementById('fotoPerfil').src = corredor.fotoPerfil;
-    document.getElementById('nombreCorredor').textContent = corredor.nombre;
-    document.getElementById('mostrarNumero').textContent = corredor.numero;
-    document.getElementById('categoria').textContent = corredor.categoria;
-    document.getElementById('equipo').textContent = corredor.equipo;
-    document.getElementById('tiempo').textContent = corredor.tiempo;
+    const datos = snap.docs[0].data();
+
+    // Cargar fotos desde tu repositorio de GitHub
+    document.getElementById('fotoPerfil').src = datos.fotoPerfil;
+    document.getElementById('nombreCorredor').textContent = datos.nombre;
+    document.getElementById('mostrarNumero').textContent = datos.numero;
+    document.getElementById('categoria').textContent = datos.categoria;
+    document.getElementById('equipo').textContent = datos.equipo;
+    document.getElementById('tiempo').textContent = datos.tiempo;
 
     const galeria = document.getElementById('fotosGaleria');
     galeria.innerHTML = '';
-    corredor.galeria.forEach(foto => {
+    (datos.galeria || []).forEach(url => {
         const img = document.createElement('img');
-        img.src = foto;
+        img.src = url;
         img.alt = "Foto del corredor";
         galeria.appendChild(img);
     });
