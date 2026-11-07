@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>🏃 Encuentra a tu Corredor</title>
-    <!-- Firebase -->
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
     
@@ -36,7 +35,6 @@
             background: rgba(255,255,255,0.95); color: #0f2027;
             font-size: 1rem;
         }
-        /* CAMPOS NÚMERO MÁS GRANDES */
         input#numCorredor, input#fNumero {
             font-size: 2.5rem !important;
             font-weight: bold;
@@ -122,7 +120,6 @@
         <button id="btnSalir" class="btn-rojo btn-salir oculto" onclick="cerrarSesion()">🚪 Salir</button>
     </header>
 
-    <!-- INICIO DE SESIÓN -->
     <div id="cajaLogin" class="login-box">
         <h2>🔐 Acceso de Administrador</h2>
         <input type="text" id="usuario" placeholder="Usuario">
@@ -134,15 +131,12 @@
         </p>
     </div>
 
-    <!-- BOTÓN DE REGISTRO (SOLO SI HAY SESIÓN) -->
     <div id="botonRegistrar" class="oculto" style="text-align: center; margin-bottom: 20px;">
         <button onclick="mostrarFormulario()">📷 Registrar Corredor</button>
     </div>
 
-    <!-- FORMULARIO DE REGISTRO -->
     <div id="formAgregar" class="form-agregar oculto">
         <h3>📋 Registrar Nuevo Corredor</h3>
-        
         <div class="aviso">
             💡 Sube tus fotos a GitHub → escribe el nombre exacto del archivo.
         </div>
@@ -175,14 +169,12 @@
         <p id="mensajeExito" class="exito">✅ ¡Guardado correctamente!</p>
     </div>
 
-    <!-- BUSCADOR — VISIBLE PARA TODOS -->
     <div class="buscador">
         <h2>🔍 Buscar por Número</h2>
         <input type="number" id="numCorredor" placeholder="0" min="1">
         <button onclick="buscarCorredor()">Buscar</button>
     </div>
 
-    <!-- TARJETA DEL CORREDOR -->
     <div id="tarjeta" class="tarjeta-corredor">
         <div class="info-principal">
             <img id="fotoPerfil" class="foto-perfil" src="" alt="Foto del corredor">
@@ -204,16 +196,13 @@
         ⚠️ No hay ningún corredor con ese número
     </div>
 
-    <!-- FORMAS DE PAGO -->
     <div class="pago">
         <h2>💳 Formas de Pago — Inscripción</h2>
-        
         <div class="metodo">
             <h3>💳 Tarjeta de Crédito / Débito</h3>
             <p>Paga con cualquier tarjeta VISA, Mastercard o AMEX de forma segura.</p>
             <p><strong>Pasos:</strong> Selecciona "Pagar con Tarjeta" e ingresa los datos.</p>
         </div>
-
         <div class="metodo">
             <h3>🏦 Transferencia Bancaria</h3>
             <p><strong>Banco:</strong> BBVA México</p>
@@ -222,7 +211,6 @@
             <p><strong>CLABE:</strong> 012345678901234567</p>
             <p><strong>Concepto:</strong> Inscripción — Número del corredor</p>
         </div>
-
         <div class="metodo">
             <h3>📱 Otras Opciones</h3>
             <p>Mercado Pago / PayPal / Efectivo en puntos autorizados</p>
@@ -232,9 +220,6 @@
 </div>
 
 <script>
-// ==================================================
-// DATOS DE FIREBASE
-// ==================================================
 const firebaseConfig = {
   apiKey: "AIzaSyDyeTJpaehpLtdaNj0QD293SVl9g0FQc",
   authDomain: "corredores-deportivos.firebaseapp.com",
@@ -248,14 +233,12 @@ firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 const coleccion = db.collection('corredores');
 
-// ==================================================
-// ACCESO DE ADMINISTRADOR
-// ==================================================
 const USUARIO_ADMIN = "admin";
 const CONTRASENA_ADMIN = "corredores2026";
 let sesionActiva = false;
 
 function iniciarSesion() {
+    console.log("Botón presionado"); // Para verificar que funciona
     const user = document.getElementById('usuario').value.trim();
     const pass = document.getElementById('contrasena').value;
 
@@ -291,9 +274,6 @@ function cerrarSesion() {
     document.getElementById('contrasena').value = '';
 }
 
-// ==================================================
-// FORMULARIO DE REGISTRO
-// ==================================================
 function mostrarFormulario() {
     if (!sesionActiva) { alert('⚠️ Inicia sesión primero'); return; }
     document.getElementById('formAgregar').classList.remove('oculto');
@@ -371,15 +351,6 @@ async function guardarCorredor() {
     btn.textContent = '✅ Guardar';
 }
 
-// ==================================================
-// BUSCAR CORREDOR
-// ==================================================
-async function buscarCorredor() {
-    const num = parseInt(document.getElementById('numCorredor').value);
-    const tarjeta = document.getElementById
-// ==================================================
-// BUSCAR CORREDOR
-// ==================================================
 async function buscarCorredor() {
     const num = parseInt(document.getElementById('numCorredor').value);
     const tarjeta = document.getElementById('tarjeta');
@@ -403,12 +374,12 @@ async function buscarCorredor() {
 
         const datos = snap.docs[0].data();
 
-        // Cargar foto de perfil
         document.getElementById('fotoPerfil').src = datos.fotoPerfil;
         document.getElementById('nombreCorredor').textContent = datos.nombre;
         document.getElementById('mostrarNumero').textContent = datos.numero;
         document.getElementById('categoria').textContent = datos.categoria;
-        document.getElementById('equipo').textContent = datos.equipo;
+        document.getElementById('equipo').text
+.textContent = datos.equipo;
         document.getElementById('tiempo').textContent = datos.tiempo;
 
         // Cargar galería de fotos
@@ -432,10 +403,15 @@ async function buscarCorredor() {
     }
 }
 
-// Permitir buscar presionando Enter
-document.getElementById('numCorredor').addEventListener('keypress', function(e) {
-    if (e.key === 'Enter') {
-        buscarCorredor();
+// Buscar al presionar Enter en el campo de número
+document.addEventListener('DOMContentLoaded', function() {
+    const campoNumero = document.getElementById('numCorredor');
+    if (campoNumero) {
+        campoNumero.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                buscarCorredor();
+            }
+        });
     }
 });
 </script>
