@@ -443,12 +443,13 @@ async function buscarCorredor() {
 
 // Buscar al presionar Enter
 document.addEventListener('DOMContentLoaded', function() {
-    const campo = document.getElementById('numCorredor
+    const campo = document.getElementById('numCorredor');
     if (campo) {
-        campo.addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') buscarCorredor();
-        });
-    }
+        campo.addEventListener('keypress',
+function(e) {
+    if (e.key === 'Enter') buscarCorredor();
+});
+}
 });
 </script>
 
