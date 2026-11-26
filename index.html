@@ -420,12 +420,7 @@ function cerrarSesion() {
     localStorage.removeItem('sesion');
     document.getElementById('seccionLogin').classList.remove('oculto');
     document.getElementById('seccionRegistro').classList.add('oculto');
-    document.getElementById('form
-function cerrarSesion() {
-    sesionActiva = false;
-    localStorage.removeItem('sesion');
-    document.getElementById('seccionLogin').classList.remove('oculto');
-    document.getElementById('seccionRegistro').classList.add('oculto');
+    document.getElementById('formAgregar
     document.getElementById('formAgregar').classList.add('oculto');
     document.getElementById('btnSalir').classList.add('oculto');
     document.getElementById('usuario').value = '';
@@ -476,7 +471,6 @@ async function guardarCorredor() {
     const fotoPerfilArchivo = document.getElementById('fotoPerfilArchivo').files[0];
     const galeriaArchivos = document.getElementById('galeriaArchivos').files;
 
-    // Validaciones
     if (!num) { alert('⚠️ Escribe el número del corredor'); return; }
     if (!nombre) { alert('⚠️ Escribe el nombre del corredor'); return; }
     if (!fotoPerfilArchivo) { alert('⚠️ Selecciona una foto de perfil'); return; }
@@ -488,7 +482,6 @@ async function guardarCorredor() {
     document.getElementById('barraProgreso').style.width = '5%';
 
     try {
-        // Verificar si el número ya existe
         const existe = await coleccion.where('numero', '==', num).get();
         if (!existe.empty) {
             const datosExistente = existe.docs[0].data();
@@ -498,11 +491,9 @@ async function guardarCorredor() {
             return;
         }
 
-        // Subir foto de perfil
         const fotoPerfilUrl = await subirArchivo(fotoPerfilArchivo, `corredores/${num}/perfil.jpg`);
         document.getElementById('barraProgreso').style.width = '40%';
 
-        // Subir fotos de la galería
         const galeriaUrls = [];
         for (let i = 0; i < galeriaArchivos.length; i++) {
             const url = await subirArchivo(galeriaArchivos[i], `corredores/${num}/foto_${i}.jpg`);
@@ -510,7 +501,6 @@ async function guardarCorredor() {
         }
         document.getElementById('barraProgreso').style.width = '100%';
 
-        // Guardar datos en Firestore
         await coleccion.add({
             numero: num,
             nombre: nombre,
@@ -534,16 +524,13 @@ async function guardarCorredor() {
     btn.textContent = '✅ Guardar y Subir Fotos';
 }
 
-// ==================================================
-// BUSCAR CORREDOR Y VER FOTOS POR NÚMERO
-// ==================================================
+// ===== BUSCAR CORREDOR Y VER FOTOS POR NÚMERO =====
 async function buscarCorredor() {
     const num = parseInt(document.getElementById('numCorredor').value);
     const tarjeta = document.getElementById('tarjeta');
     const aviso = document.getElementById('noEncontrado');
     const galeria = document.getElementById('fotosGaleria');
 
-    // Limpiar resultados anteriores
     galeria.innerHTML = '';
     tarjeta.style.display = 'none';
     aviso.style.display = 'none';
@@ -563,7 +550,6 @@ async function buscarCorredor() {
 
         const datos = snap.docs[0].data();
 
-        // Mostrar datos del corredor
         document.getElementById('fotoPerfil').src = datos.fotoPerfil;
         document.getElementById('nombreCorredor').textContent = datos.nombre;
         document.getElementById('mostrarNumero').textContent = datos.numero;
@@ -571,7 +557,6 @@ async function buscarCorredor() {
         document.getElementById('equipo').textContent = datos.equipo;
         document.getElementById('tiempo').textContent = datos.tiempo;
 
-        // Mostrar fotos de la galería
         const fotos = datos.galeria || [];
         if (fotos.length === 0) {
             galeria.innerHTML = '<p style="opacity:0.7; text-align:center;">📸 Solo foto de perfil</p>';
@@ -593,7 +578,6 @@ async function buscarCorredor() {
     }
 }
 
-// Buscar al presionar Enter
 document.addEventListener('DOMContentLoaded', function() {
     const campo = document.getElementById('numCorredor');
     if (campo) {
@@ -606,5 +590,3 @@ document.addEventListener('DOMContentLoaded', function() {
 
 </body>
 </html>
-
-
