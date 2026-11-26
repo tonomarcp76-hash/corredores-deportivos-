@@ -29,7 +29,7 @@
         header h1 { font-size: 2rem; color: #00ffcc; text-shadow: 0 0 15px rgba(0,255,204,0.4); }
         header p { opacity: 0.8; margin-top: 5px; }
         
-        .buscador, .form-agregar, .pago, .login-section, .registro-section {
+        .buscador, .admin-panel, .pago, .login-section {
             background: rgba(255,255,255,0.1);
             padding: 30px;
             border-radius: 15px;
@@ -38,12 +38,12 @@
             border: 1px solid rgba(255,255,255,0.2);
         }
         .buscador { text-align: center; }
-        .buscador h2, .pago h3, .form-agregar h3, .login-section h3 { 
+        .buscador h2, .pago h3, .login-section h3, .admin-panel h3 { 
             color: #00ffcc; 
             margin-bottom: 20px;
             font-size: 1.3rem;
         }
-        input#numCorredor, input#fNumero {
+        input#numCorredor, input#adminNumero {
             font-size: 2.5rem !important;
             font-weight: bold;
             text-align: center;
@@ -57,7 +57,7 @@
             color: #0f2027;
         }
 
-        /* 🔐 SECCIÓN DE ADMINISTRADOR — HORIZONTAL */
+        /* 🔐 SECCIÓN DE INICIO DE SESIÓN */
         .login-section h3 { text-align: center; }
         .login-box {
             display: flex;
@@ -91,36 +91,25 @@
             margin-top: 12px;
         }
 
-        .registro-section { text-align: center; }
-        .registro-section p { margin-top: 8px; font-size: 0.85rem; opacity: 0.7; }
-
-        .form-agregar { display: none; text-align: left; }
-        .form-agregar.mostrar { display: block; }
-        .form-agregar label { 
-            display: block; 
-            margin: 18px 0 6px; 
-            font-weight: bold; 
-            font-size: 0.95rem;
-        }
-        .form-agregar input:not([type="file"]) {
-            width: 100%; 
-            max-width: 400px;
-            padding: 12px; 
-            border-radius: 8px; 
-            border: none;
-            background: rgba(255,255,255,0.95); 
-            color: #0f2027;
-            font-size: 1rem;
-        }
-        .form-agregar input[type="file"] {
+        /* 🔧 PANEL DE ADMINISTRACIÓN SIMPLIFICADO */
+        .admin-panel { text-align: center; display: none; }
+        .admin-panel.mostrar { display: block; }
+        .admin-panel input[type="file"] {
             background: rgba(255,255,255,0.1); 
             border: 2px dashed #00ffcc; 
             color: #fff; 
-            padding: 15px; 
+            padding: 20px; 
             border-radius: 8px; 
             cursor: pointer;
-            width: 100%;
             max-width: 400px;
+            margin: 15px auto;
+            display: block;
+        }
+        .admin-panel label {
+            display: block;
+            margin-top: 15px;
+            font-weight: bold;
+            color: #fff;
         }
         
         /* 💳 SECCIÓN DE PAGO */
@@ -164,7 +153,7 @@
             height: 20px; 
             background: rgba(0,0,0,0.3); 
             border-radius: 10px; 
-            margin: 15px 0; 
+            margin: 15px auto; 
             display: none; 
         }
         .barra { 
@@ -242,6 +231,7 @@
             background: rgba(0,255,150,0.1); 
             border-radius: 8px; 
             max-width: 400px;
+            margin: 0 auto;
         }
         .oculto { display: none !important; }
         .instruccion { 
@@ -288,59 +278,34 @@
         </div>
     </div>
 
-    <!-- 🔐 INICIO DE SESIÓN ADMINISTRADOR — AHORA ABAJO Y HORIZONTAL -->
+    <!-- 🔐 INICIO DE SESIÓN ADMINISTRADOR -->
     <div id="seccionLogin" class="login-section">
         <h3>🔐 Panel de Administración</h3>
         <div class="login-box">
             <input type="text" id="usuario" placeholder="Usuario">
             <input type="password" id="contrasena" placeholder="Contraseña">
             <button onclick="iniciarSesion()">Entrar</button>
-            <p>Solo el administrador puede registrar corredores y subir fotos</p>
+            <p>Solo el administrador puede subir fotos de corredores</p>
         </div>
     </div>
 
-    <!-- 📷 BOTÓN PARA ABRIR FORMULARIO (SOLO CUANDO HAY SESIÓN) -->
-    <div id="seccionRegistro" class="registro-section oculto">
-        <button onclick="mostrarFormulario()">📷 Registrar Corredor y Subir Fotos</button>
-        <p>Entraste como administrador — ¡Bienvenido!</p>
-    </div>
-
-    <!-- 📤 FORMULARIO DE REGISTRO -->
-    <div id="formAgregar" class="form-agregar oculto">
-        <h3>📋 Registrar Nuevo Corredor</h3>
+    <!-- 🔧 PANEL DE ADMINISTRACIÓN — SIMPLIFICADO -->
+    <div id="panelAdmin" class="admin-panel">
+        <h3>📤 Subir Foto de Corredor</h3>
         
-        <label>Número del corredor:</label>
-        <input type="number" id="fNumero" min="1" placeholder="Ej: 1">
+        <label>Número del Corredor:</label>
+        <input type="number" id="adminNumero" placeholder="Número" min="1">
         
-        <label>Nombre Completo:</label>
-        <input type="text" id="fNombre" placeholder="Tu nombre completo">
-        
-        <label>Categoría:</label>
-        <input type="text" id="fCategoria" placeholder="Ej: 5km Libre">
-        
-        <label>Equipo:</label>
-        <input type="text" id="fEquipo" placeholder="Nombre de tu equipo">
-        
-        <label>Tiempo / Posición:</label>
-        <input type="text" id="fTiempo" placeholder="Ej: 18:45 min / 1er Lugar">
-        
-        <label>📷 Foto de Perfil:</label>
-        <input type="file" id="fotoPerfilArchivo" accept="image/*">
-        <p class="instruccion">Selecciona una foto principal del corredor</p>
-        
-        <label>📸 Fotos de la Galería:</label>
-        <input type="file" id="galeriaArchivos" accept="image/*" multiple>
-        <p class="instruccion">Puedes seleccionar varias fotos a la vez</p>
+        <label>📷 Seleccionar Foto:</label>
+        <input type="file" id="adminFoto" accept="image/*">
         
         <div class="progreso" id="cajaProgreso">
             <div class="barra" id="barraProgreso"></div>
         </div>
         
-        <div style="text-align: center; margin-top: 20px;">
-            <button id="btnGuardar" onclick="guardarCorredor()">✅ Guardar y Subir Fotos</button>
-            <button class="btn-rojo" onclick="ocultarFormulario()">❌ Cancelar</button>
-        </div>
-        <p id="mensajeExito" class="exito">✅ ¡Corredor registrado y fotos subidas correctamente!</p>
+        <br>
+        <button id="btnSubir" onclick="subirFotoCorredor()">✅ Subir Foto</button>
+        <p id="mensajeExito" class="exito">✅ ¡Foto subida correctamente!</p>
     </div>
 
     <!-- 📸 TARJETA CON FOTOS DEL CORREDOR -->
@@ -350,9 +315,6 @@
             <div class="datos">
                 <h2 id="nombreCorredor"></h2>
                 <p><strong>Número:</strong> <span id="mostrarNumero"></span></p>
-                <p><strong>Categoría:</strong> <span id="categoria"></span></p>
-                <p><strong>Equipo:</strong> <span id="equipo"></span></p>
-                <p><strong>Tiempo / Posición:</strong> <span id="tiempo"></span></p>
             </div>
         </div>
         <div class="galeria">
@@ -364,7 +326,7 @@
     <!-- ⚠️ MENSAJE SI NO SE ENCUENTRA -->
     <div id="noEncontrado" class="mensaje">
         😕 No hay ningún corredor con ese número.<br>
-        Verifica que el número sea correcto o que el administrador lo haya registrado.
+        Verifica que el número sea correcto.
     </div>
 </div>
 
@@ -398,9 +360,9 @@ function iniciarSesion() {
         sesionActiva = true;
         localStorage.setItem('sesion', 'activa');
         document.getElementById('seccionLogin').classList.add('oculto');
-        document.getElementById('seccionRegistro').classList.remove('oculto');
+        document.getElementById('panelAdmin').classList.add('mostrar');
         document.getElementById('btnSalir').classList.remove('oculto');
-        alert('✅ ¡Bienvenido! Ahora puedes registrar corredores y subir fotos');
+        alert('✅ ¡Bienvenido! Ahora puedes subir fotos');
     } else {
         alert('❌ Usuario o contraseña incorrectos\n\nUsuario: admin\nContraseña: corredores2026');
     }
@@ -410,7 +372,7 @@ function verificarSesion() {
     if (localStorage.getItem('sesion') === 'activa') {
         sesionActiva = true;
         document.getElementById('seccionLogin').classList.add('oculto');
-        document.getElementById('seccionRegistro').classList.remove('oculto');
+        document.getElementById('panelAdmin').classList.add('mostrar');
         document.getElementById('btnSalir').classList.remove('oculto');
     }
 }
@@ -419,109 +381,74 @@ function cerrarSesion() {
     sesionActiva = false;
     localStorage.removeItem('sesion');
     document.getElementById('seccionLogin').classList.remove('oculto');
-    document.getElementById('seccionRegistro').classList.add('oculto');
-    document.getElementById('formAgregar
-    document.getElementById('formAgregar').classList.add('oculto');
+    document.getElementById('panelAdmin').classList.remove('mostrar');
     document.getElementById('btnSalir').classList.add('oculto');
     document.getElementById('usuario').value = '';
     document.getElementById('contrasena').value = '';
+    limpiarPanelAdmin();
 }
 
-// ===== MOSTRAR/OCULTAR FORMULARIO =====
-function mostrarFormulario() {
-    if (!sesionActiva) { alert('⚠️ Inicia sesión primero'); return; }
-    document.getElementById('formAgregar').classList.remove('oculto');
-    document.getElementById('mensajeExito').style.display = 'none';
-}
-
-function ocultarFormulario() {
-    document.getElementById('formAgregar').classList.add('oculto');
-    limpiarFormulario();
-}
-
-function limpiarFormulario() {
-    document.getElementById('fNumero').value = '';
-    document.getElementById('fNombre').value = '';
-    document.getElementById('fCategoria').value = '';
-    document.getElementById('fEquipo').value = '';
-    document.getElementById('fTiempo').value = '';
-    document.getElementById('fotoPerfilArchivo').value = '';
-    document.getElementById('galeriaArchivos').value = '';
+function limpiarPanelAdmin() {
+    document.getElementById('adminNumero').value = '';
+    document.getElementById('adminFoto').value = '';
     document.getElementById('cajaProgreso').style.display = 'none';
     document.getElementById('barraProgreso').style.width = '0%';
     document.getElementById('mensajeExito').style.display = 'none';
 }
 
-// ===== SUBIR ARCHIVO A FIREBASE STORAGE =====
-async function subirArchivo(archivo, ruta) {
-    const ref = storage.ref(ruta);
-    const snapshot = await ref.put(archivo);
-    return await snapshot.ref.getDownloadURL();
-}
-
-// ===== GUARDAR CORREDOR Y SUBIR FOTOS =====
-async function guardarCorredor() {
+// ===== SUBIR FOTO DE CORREDOR =====
+async function subirFotoCorredor() {
     if (!sesionActiva) { alert('⚠️ Inicia sesión primero'); return; }
 
-    const num = parseInt(document.getElementById('fNumero').value);
-    const nombre = document.getElementById('fNombre').value.trim();
-    const cat = document.getElementById('fCategoria').value.trim();
-    const equipo = document.getElementById('fEquipo').value.trim();
-    const tiempo = document.getElementById('fTiempo').value.trim();
-    const fotoPerfilArchivo = document.getElementById('fotoPerfilArchivo').files[0];
-    const galeriaArchivos = document.getElementById('galeriaArchivos').files;
+    const num = parseInt(document.getElementById('adminNumero').value);
+    const archivo = document.getElementById('adminFoto').files[0];
 
     if (!num) { alert('⚠️ Escribe el número del corredor'); return; }
-    if (!nombre) { alert('⚠️ Escribe el nombre del corredor'); return; }
-    if (!fotoPerfilArchivo) { alert('⚠️ Selecciona una foto de perfil'); return; }
+    if (!archivo) { alert('⚠️ Selecciona una foto'); return; }
 
-    const btn = document.getElementById('btnGuardar');
+    const btn = document.getElementById('btnSubir');
     btn.classList.add('cargando');
-    btn.textContent = 'Subiendo fotos...';
+    btn.textContent = 'Subiendo...';
     document.getElementById('cajaProgreso').style.display = 'block';
-    document.getElementById('barraProgreso').style.width = '5%';
+    document.getElementById('barraProgreso').style.width = '10%';
 
     try {
         const existe = await coleccion.where('numero', '==', num).get();
-        if (!existe.empty) {
-            const datosExistente = existe.docs[0].data();
-            alert(`⚠️ El número ${num} ya está registrado a nombre de: ${datosExistente.nombre}`);
-            btn.classList.remove('cargando');
-            btn.textContent = '✅ Guardar y Subir Fotos';
-            return;
-        }
-
-        const fotoPerfilUrl = await subirArchivo(fotoPerfilArchivo, `corredores/${num}/perfil.jpg`);
-        document.getElementById('barraProgreso').style.width = '40%';
-
-        const galeriaUrls = [];
-        for (let i = 0; i < galeriaArchivos.length; i++) {
-            const url = await subirArchivo(galeriaArchivos[i], `corredores/${num}/foto_${i}.jpg`);
-            galeriaUrls.push(url);
-        }
+        const refImagen = storage.ref(`corredores/${num}/foto_${Date.now()}.jpg`);
+        const snapshot = await refImagen.put(archivo);
+        const urlFoto = await snapshot.ref.getDownloadURL();
         document.getElementById('barraProgreso').style.width = '100%';
 
-        await coleccion.add({
-            numero: num,
-            nombre: nombre,
-            categoria: cat || 'Sin categoría',
-            equipo: equipo || 'Sin equipo',
-            tiempo: tiempo || '00:00 min',
-            fotoPerfil: fotoPerfilUrl,
-            galeria: galeriaUrls,
-            creado: firebase.firestore.FieldValue.serverTimestamp()
+        if (existe.empty) {
+            await coleccion.add({
+                numero: num,
+                nombre: `Corredor ${num}`,
+                galeria: [urlFoto],
+                creado: firebase.firestore.FieldValue.serverTimestamp()
+            });
+        } else {
+            const docRef = existe.docs[0].ref;
+            const datosActual
+        const datosActual = existe.docs[0].data();
+        const galeriaActual = datosActual.galeria || [];
+        await docRef.update({
+            galeria: [...galeriaActual, urlFoto]
         });
+      }
 
-        document.getElementById('mensajeExito').style.display = 'block';
-        setTimeout(ocultarFormulario, 3000);
+      document.getElementById('mensajeExito').style.display = 'block';
+      setTimeout(() => {
+          document.getElementById('mensajeExito').style.display = 'none';
+      }, 4000);
 
     } catch (error) {
         console.error(error);
         alert('❌ Error: ' + error.message);
     }
-    
+
     btn.classList.remove('cargando');
-    btn.textContent = '✅ Guardar y Subir Fotos';
+    btn.textContent = '✅ Subir Foto';
+    limpiarPanelAdmin();
 }
 
 // ===== BUSCAR CORREDOR Y VER FOTOS POR NÚMERO =====
@@ -550,16 +477,12 @@ async function buscarCorredor() {
 
         const datos = snap.docs[0].data();
 
-        document.getElementById('fotoPerfil').src = datos.fotoPerfil;
-        document.getElementById('nombreCorredor').textContent = datos.nombre;
+        document.getElementById('nombreCorredor').textContent = datos.nombre || `Corredor ${num}`;
         document.getElementById('mostrarNumero').textContent = datos.numero;
-        document.getElementById('categoria').textContent = datos.categoria;
-        document.getElementById('equipo').textContent = datos.equipo;
-        document.getElementById('tiempo').textContent = datos.tiempo;
 
         const fotos = datos.galeria || [];
         if (fotos.length === 0) {
-            galeria.innerHTML = '<p style="opacity:0.7; text-align:center;">📸 Solo foto de perfil</p>';
+            galeria.innerHTML = '<p style="opacity:0.7; text-align:center;">📸 No hay fotos registradas</p>';
         } else {
             fotos.forEach(url => {
                 const img = document.createElement('img');
@@ -578,6 +501,7 @@ async function buscarCorredor() {
     }
 }
 
+// Buscar al presionar Enter
 document.addEventListener('DOMContentLoaded', function() {
     const campo = document.getElementById('numCorredor');
     if (campo) {
