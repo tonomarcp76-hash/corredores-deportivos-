@@ -285,7 +285,7 @@ const storage = firebase.storage();
 const coleccion = db.collection('corredores');
 
 // ===== SUBIR FOTO DE CORREDOR — VERSIÓN CORREGIDA =====
-async function subirFoto() {
+function subirFoto() {
     const num = parseInt(document.getElementById('numeroCorredor').value);
     const archivo = document.getElementById('fotoCorredor').files[0];
     const btn = document.getElementById('btnSubir');
@@ -301,8 +301,8 @@ async function subirFoto() {
     barraProgreso.style.width = '0%';
 
     // Validaciones
-    if (!num) { 
-        mensajeError.textContent = '⚠️ Escribe el número del corredor';
+    if (!num || num <= 0) { 
+        mensajeError.textContent = '⚠️ Escribe un número válido del corredor';
         mensajeError.style.display = 'block';
         return; 
     }
@@ -314,81 +314,86 @@ async function subirFoto() {
 
     // Mostrar estado de carga
     btn.disabled = true;
-    btn.textContent = 'Subiendo...';
+    btn.textContent = '⏳ Subiendo...';
     cajaProgreso.style.display = 'block';
     barraProgreso.style.width = '5%';
 
-    try {
-        // 1. Buscar si el corredor ya existe
-        const existe = await coleccion.where('numero', '==', num).get();
-        barraProgreso.style.width = '15%';
+    // Ruta donde se guardará la imagen
+    const rutaArchivo = `corredores/${num}/foto_${Date.now()}.jpg`;
+    const refImagen = storage.ref(rutaArchivo);
+    const urlFotoRef = refImagen.put(archivo);
 
-        // 2. Subir imagen a Firebase Storage
-        const rutaArchivo = `corredores/${num}/foto_${Date.now()}.jpg`;
-        const refImagen = storage.ref(rutaArchivo);
-        const uploadTask = refImagen.put(archivo);
-
-        // Seguimiento del progreso
-        uploadTask.on('state_changed', 
-            (snapshot) => {
-                const progreso = Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 80) + 15;
-                barraProgreso.style.width = progreso + '%';
-            },
-            (error) => {
-                throw error;
-            }
-        );
-
-        // Esperar a que termine de subir
-        await uploadTask;
-        barraProgreso.style.width = '95%';
-
-        // Obtener URL de la imagen
-        const urlFoto = await uploadTask.snapshot.ref.getDownloadURL();
-
-        // 3. Guardar en Firestore
-        if (existe.empty) {
-            // Crear nuevo registro
-            await coleccion.add({
-                numero: num,
-                nombre: `Corredor ${num}`,
-                galeria: [urlFoto],
-                creado: firebase.firestore.FieldValue.serverTimestamp()
-            });
-        } else {
-            // Agregar foto a registro existente
-            const docRef = existe.docs[0].ref;
-            const datosActual = existe.docs[0].data();
-            const galeriaActual = datosActual.galeria || [];
-            await docRef.update({
-                galeria: [...galeriaActual, urlFoto]
-            });
-        }
-
-        barraProgreso.style.width = '100%';
-        
-        // Éxito
-        mensajeExito.style.display = 'block';
-        
-        // Limpiar formulario
-        document.getElementById('numeroCorredor').value = '';
-        document.getElementById('fotoCorredor').value = '';
-
-        setTimeout(() => {
-            mensajeExito.style.display = 'none';
+    // Seguimiento del progreso
+    urlFotoRef.on('state_changed', 
+        (snapshot) => {
+            const porcentaje = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+            barraProgreso.style.width = porcentaje + '%';
+        },
+        (error) => {
+            // Error durante la subida
+            console.error('❌ Error:', error);
+            btn.disabled = false;
+            btn.textContent = '✅ Subir Foto';
             cajaProgreso.style.display = 'none';
-            barraProgreso.style.width = '0%';
-        }, 4000);
+            
+            let mensaje = error.message;
+            if (error.code === 'storage/unauthorized') {
+                mensaje = 'No tienes permiso. Revisa las reglas de Firebase Storage.';
+            }
+            mensajeError.textContent = '❌ ' + mensaje;
+            mensajeError.style.display = 'block';
+        },
+        async () => {
+            // Subida completada
+            try {
+                barraProgreso.style.width = '90%';
+                const urlFoto = await urlFotoRef.snapshot.ref.getDownloadURL();
+                
+                // Buscar si el corredor ya existe
+                const existe = await coleccion.where('numero', '==', num).get();
 
-    } catch (error) {
-        console.error('Error:', error);
-        mensajeError.textContent = '❌ Error: ' + error.message;
-        mensajeError.style.display = 'block';
-        cajaProgreso.style.display = 'none';
-    }
+                if (existe.empty) {
+                    // Crear nuevo registro
+                    await coleccion.add({
+                        numero: num,
+                        nombre: `Corredor ${num}`,
+                        galeria: [urlFoto],
+                        creado: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                } else {
+                    // Agregar foto al existente
+                    const docRef = existe.docs[0].ref;
+                    const datos = existe.docs[0].data();
+                    const galeria = datos.galeria || [];
+                    await docRef.update({
+                        galeria: [...galeria, urlFoto]
+                    });
+                }
 
-    btn.disabled = false;
-    btn.textContent = '✅ Subir Foto';
+                barraProgreso.style.width = '100%';
+                mensajeExito.style.display = 'block';
+
+                // Limpiar formulario
+                document.getElementById('numeroCorredor').value = '';
+                document.getElementById('fotoCorredor').value = '';
+
+                setTimeout(() => {
+                    mensajeExito.style.display = 'none';
+                    cajaProgreso.style.display = 'none';
+                    barraProgreso.style.width = '0%';
+                }, 4000);
+
+            } catch (error) {
+                console.error('❌ Error al guardar:', error);
+                mensajeError.textContent = '❌ Error: ' + error.message;
+                mensajeError.style.display = 'block';
+                cajaProgreso.style.display = 'none';
+            }
+
+            btn.disabled = false;
+            btn.textContent = '✅ Subir Foto';
+        }
+    );
 }
 
 // ===== BUSCAR CORREDOR Y VER FOTOS POR NÚMERO =====
@@ -425,9 +430,10 @@ async function buscarCorredor() {
             galeria.innerHTML = '<p style="opacity:0.7; text-align:center;">📸 No hay fotos registradas</p>';
         } else {
             fotos.forEach(url => {
-                const img = document.createElement('img');
+                const img = document
+.createElement('img');
                 img.src = url;
-                img.alt = `Foto del corredor ${datos.nombre}`;
+                img.alt = `Foto del corredor ${datos.nombre || '#' + num}`;
                 img.loading = 'lazy';
                 galeria.appendChild(img);
             });
@@ -445,13 +451,13 @@ async function buscarCorredor() {
 document.addEventListener('DOMContentLoaded', function() {
     const campo = document.getElementById('numCorredor');
     if (campo) {
-        campo.addEventListener('keypress',
-function(e) {
-    if (e.key === 'Enter') buscarCorredor();
-});
-}
+        campo.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') buscarCorredor();
+        });
+    }
 });
 </script>
 
 </body>
 </html>
+
