@@ -125,8 +125,20 @@
             object-fit: cover; 
             border-radius: 10px;
             transition: transform 0.3s;
+            border: 2px solid transparent;
         }
         .fotos img:hover { transform: scale(1.05); }
+        .fotos img[src*="undefined"], .fotos img:not([src]) {
+            display: none;
+        }
+        .imagen-error {
+            padding: 20px;
+            background: rgba(255,107,107,0.1);
+            border-radius: 8px;
+            text-align: center;
+            color: #ff6b6b;
+            font-size: 0.9rem;
+        }
         
         .mensaje { 
             display: none; 
@@ -277,8 +289,8 @@ async function agregarFoto() {
         return; 
     }
 
-    // ✅ URL CORREGIDA usando raw.githubusercontent.com
-    const urlFoto = `https://raw.githubusercontent.com/tonomarcp76-hash/corredores-deportivos/main/fotos-corredores/${nombreArchivo}`;
+    // ✅ URL RELATIVA — más simple y confiable
+    const urlFoto = `./fotos-corredores/${nombreArchivo}`;
     console.log('📷 URL de la imagen:', urlFoto);
 
     try {
@@ -354,12 +366,26 @@ async function buscarCorredor() {
         if (fotos.length === 0) {
             galeria.innerHTML = '<p style="opacity:0.7; text-align:center;">📸 No hay fotos registradas</p>';
         } else {
-            fotos.forEach(url => {
+            fotos.forEach((url, index) => {
+                const contenedor = document.createElement('div');
+                contenedor.style.textAlign = 'center';
+                
                 const img = document.createElement('img');
                 img.src = url;
-                img.alt = `Foto del corredor ${datos.nombre || '#' + num}`;
+                img.alt = `Foto del corredor #${num} - ${index + 1}`;
                 img.loading = 'lazy';
-                galeria.appendChild(img);
+                
+                img.onerror = function() {
+                    contenedor.innerHTML = `
+                        <div class="imagen-error">
+                            ❌ No se pudo cargar<br>
+                            <small>Verifica el nombre del archivo</small>
+                        </div>
+                    `;
+                };
+                
+                contenedor.appendChild(img);
+                galeria.appendChild(contenedor);
             });
         }
 
