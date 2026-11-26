@@ -92,6 +92,7 @@
             color: #0f2027;
         }
         .form-agregar { display: none; text-align: left; }
+        .form-agregar.mostrar { display: block; }
         .form-agregar label { 
             display: block; 
             margin: 18px 0 6px; 
@@ -421,6 +422,7 @@ function cerrarSesion() {
     document.getElementById('formAgregar').classList.add('oculto');
     document.getElementById('btnSalir').classList.add('oculto');
     document.getElementById('usuario').value = '';
+    document.getElementById('contrasena').value = '';
     document.getElementById('contrasena').value = '';
 }
 
