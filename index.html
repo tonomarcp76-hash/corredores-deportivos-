@@ -16,6 +16,50 @@
             padding: 20px;
             color: #fff;
         }
+
+        /* 🔐 PANTALLA DE INICIO DE SESIÓN */
+        .pantalla-login {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .caja-login {
+            background: rgba(255,255,255,0.1);
+            padding: 40px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+            max-width: 400px;
+            width: 100%;
+            text-align: center;
+        }
+        .caja-login h2 { color: #00ffcc; margin-bottom: 25px; }
+        .caja-login input {
+            width: 100%;
+            padding: 12px;
+            margin: 8px 0;
+            border-radius: 8px;
+            border: none;
+            font-size: 16px;
+            background: rgba(255,255,255,0.95);
+            color: #0f2027;
+        }
+        .caja-login button {
+            width: 100%;
+            padding: 12px;
+            margin-top: 15px;
+            font-size: 16px;
+        }
+        .error-login {
+            color: #ff6b6b;
+            margin-top: 15px;
+            display: none;
+        }
+
+        /* Contenido principal (oculto hasta iniciar sesión) */
+        .contenido-principal { display: none; }
+
         .container { 
             max-width: 900px; 
             margin: 0 auto; 
@@ -116,21 +160,18 @@
         }
         .fotos { 
             display: grid; 
-            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); 
-            gap: 15px; 
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); 
+            gap: 20px; 
         }
         .fotos img {
             width: 100%; 
-            height: 120px; 
-            object-fit: cover; 
+            height: auto;
+            max-height: 400px;
+            object-fit: contain; 
             border-radius: 10px;
             transition: transform 0.3s;
-            border: 2px solid transparent;
         }
         .fotos img:hover { transform: scale(1.05); }
-        .fotos img[src*="undefined"], .fotos img:not([src]) {
-            display: none;
-        }
         .imagen-error {
             padding: 20px;
             background: rgba(255,107,107,0.1);
@@ -172,86 +213,142 @@
             display: block;
             line-height: 1.5;
         }
+        .btn-cerrar {
+            background: transparent;
+            color: #00ffcc;
+            border: 1px solid #00ffcc;
+            float: right;
+            margin: 0;
+        }
+        .btn-cerrar:hover {
+            background: rgba(0,255,204,0.1);
+            transform: none;
+        }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <header>
-        <h1>🏃 ENCUENTRA A TU CORREDOR</h1>
-        <p>Escribe tu número y ve tus fotos</p>
-    </header>
-
-    <!-- 🔍 BUSCADOR DE FOTOS POR NÚMERO -->
-    <div class="buscador">
-        <h2>🔍 Buscar Corredor por Número</h2>
-        <input type="number" id="numCorredor" placeholder="Escribe el número" min="1">
-        <br><br>
-        <button onclick="buscarCorredor()">Buscar Fotos</button>
-        <p class="instruccion">Escribe el número del corredor y pulsa Buscar</p>
+<!-- 🔐 PANTALLA DE INICIO DE SESIÓN -->
+<div class="pantalla-login" id="pantallaLogin">
+    <div class="caja-login">
+        <h2>🔐 Inicio de Sesión</h2>
+        <input type="text" id="usuario" placeholder="Usuario">
+        <input type="password" id="contrasena" placeholder="Contraseña">
+        <button onclick="iniciarSesion()">Ingresar</button>
+        <p id="mensajeErrorLogin" class="error-login">❌ Usuario o contraseña incorrectos</p>
     </div>
+</div>
 
-    <!-- 📸 TARJETA CON FOTOS DEL CORREDOR -->
-    <div id="tarjeta" class="tarjeta-corredor">
-        <div class="info-principal">
-            <div class="datos">
-                <h2 id="nombreCorredor"></h2>
-                <p><strong>Número:</strong> <span id="mostrarNumero"></span></p>
+<!-- 📄 CONTENIDO PRINCIPAL (OCULTO HASTA INICIAR SESIÓN) -->
+<div class="contenido-principal" id="contenidoPrincipal">
+    <div class="container">
+        <header>
+            <button class="btn-cerrar" onclick="cerrarSesion()">Cerrar Sesión</button>
+            <h1>🏃 ENCUENTRA A TU CORREDOR</h1>
+            <p>Escribe tu número y ve tus fotos</p>
+        </header>
+
+        <!-- 🔍 BUSCADOR DE FOTOS POR NÚMERO (PÚBLICO — SIN CONTRASEÑA) -->
+        <div class="buscador">
+            <h2>🔍 Buscar Corredor por Número</h2>
+            <input type="number" id="numCorredor" placeholder="Escribe el número" min="1">
+            <br><br>
+            <button onclick="buscarCorredor()">Buscar Fotos</button>
+            <p class="instruccion">Escribe el número del corredor y pulsa Buscar</p>
+        </div>
+
+        <!-- 📸 TARJETA CON FOTOS DEL CORREDOR -->
+        <div id="tarjeta" class="tarjeta-corredor">
+            <div class="info-principal">
+                <div class="datos">
+                    <h2 id="nombreCorredor"></h2>
+                    <p><strong>Número:</strong> <span id="mostrarNumero"></span></p>
+                </div>
+            </div>
+            <div class="galeria">
+                <h3>📸 Fotos del Corredor</h3>
+                <div id="fotosGaleria" class="fotos"></div>
             </div>
         </div>
-        <div class="galeria">
-            <h3>📸 Fotos del Corredor</h3>
-            <div id="fotosGaleria" class="fotos"></div>
-        </div>
-    </div>
 
-    <!-- ⚠️ MENSAJE SI NO SE ENCUENTRA -->
-    <div id="noEncontrado" class="mensaje">
-        😕 No hay ningún corredor con ese número.<br>
-        Verifica que el número sea correcto.
-    </div>
-
-    <!-- 📸 AGREGAR FOTO DESDE GITHUB -->
-    <div class="agregar-foto">
-        <h3>📸 Agregar Foto de Corredor</h3>
-        
-        <label>Número del Corredor:</label>
-        <input type="number" id="numeroCorredor" placeholder="Ej: 1" min="1">
-        
-        <label>📁 Nombre del archivo en GitHub:</label>
-        <input type="text" id="nombreArchivo" placeholder="Ej: Leo-Messi-PNG-Imagen-Argentina-Sport-Renders.png">
-        
-        <br>
-        <button onclick="agregarFoto()">✅ Agregar Foto</button>
-        
-        <p class="instruccion">
-            💡 Primero sube la imagen a la carpeta <strong>fotos-corredores</strong> en tu repositorio de GitHub.<br>
-            Luego copia el nombre completo del archivo y pégalo arriba.
-        </p>
-        
-        <p id="mensajeExito" class="exito">✅ ¡Foto agregada correctamente!</p>
-        <p id="mensajeError" class="exito error" style="display:none;"></p>
-    </div>
-
-    <!-- 💳 FORMAS DE PAGO -->
-    <div class="pago">
-        <h3>💳 Formas de Pago — Inscripción</h3>
-        <div class="metodo">
-            <strong>💳 Tarjeta de Crédito / Débito</strong>
-            <p>Paga con cualquier tarjeta VISA, Mastercard o AMEX de forma segura.</p>
+        <!-- ⚠️ MENSAJE SI NO SE ENCUENTRA -->
+        <div id="noEncontrado" class="mensaje">
+            😕 No hay ningún corredor con ese número.<br>
+            Verifica que el número sea correcto.
         </div>
-        <div class="metodo">
-            <strong>🏦 Transferencia Bancaria — BBVA México</strong>
-            <p>Banco: BBVA México<br>Cuenta: 0123456789 | CLABE: 012345678901234567</p>
+
+        <!-- 💳 FORMAS DE PAGO -->
+        <div class="pago">
+            <h3>💳 Formas de Pago — Inscripción</h3>
+            <div class="metodo">
+                <strong>💳 Tarjeta de Crédito / Débito</strong>
+                <p>Paga con cualquier tarjeta VISA, Mastercard o AMEX de forma segura.</p>
+            </div>
+            <div class="metodo">
+                <strong>🏦 Transferencia Bancaria — BBVA México</strong>
+                <p>Banco: BBVA México<br>Cuenta: 0123456789 | CLABE: 012345678901234567</p>
+            </div>
+            <div class="metodo">
+                <strong>📱 Otras opciones</strong>
+                <p>Mercado Pago / PayPal / Efectivo en puntos autorizados</p>
+            </div>
         </div>
-        <div class="metodo">
-            <strong>📱 Otras opciones</strong>
-            <p>Mercado Pago / PayPal / Efectivo en puntos autorizados</p>
+
+        <!-- 📸 AGREGAR FOTO — SOLO CON SESIÓN INICIADA -->
+        <div class="agregar-foto">
+            <h3>📸 Agregar Foto de Corredor</h3>
+            
+            <label>Número del Corredor:</label>
+            <input type="number" id="numeroCorredor" placeholder="Ej: 1" min="1">
+            
+            <label>📁 Nombre del archivo en GitHub:</label>
+            <input type="text" id="nombreArchivo" placeholder="Ej: Leo-Messi-PNG-Imagen-Argentina-Sport-Renders.png">
+            
+            <br>
+            <button onclick="agregarFoto()">✅ Agregar Foto</button>
+            
+            <p class="instruccion">
+                💡 Primero sube la imagen a la carpeta <strong>fotos-corredores</strong> en tu repositorio de GitHub.<br>
+                Luego copia el nombre completo del archivo y pégalo arriba.
+            </p>
+            
+            <p id="mensajeExito" class="exito">✅ ¡Foto agregada correctamente!</p>
+            <p id="mensajeError" class="exito error" style="display:none;"></p>
         </div>
     </div>
 </div>
 
 <script>
+// 🔐 CREDENCIALES DE ACCESO — CAMBIA ESTOS DATOS SI QUIERES
+const USUARIO_PERMITIDO = "admin";
+const CONTRASENA_PERMITIDA = "corredores2026";
+
+// 🔐 FUNCIÓN DE INICIO DE SESIÓN
+function iniciarSesion() {
+    const usuario = document.getElementById('usuario').value.trim();
+    const contrasena = document.getElementById('contrasena').value;
+    const mensajeError = document.getElementById('mensajeErrorLogin');
+
+    if (usuario === USUARIO_PERMITIDO && contrasena === CONTRASENA_PERMITIDA) {
+        // Acceso correcto — mostrar contenido
+        document.getElementById('pantallaLogin').style.display = 'none';
+        document.getElementById('contenidoPrincipal').style.display = 'block';
+        mensajeError.style.display = 'none';
+    } else {
+        // Acceso denegado
+        mensajeError.style.display = 'block';
+    }
+}
+
+// 🔐 FUNCIÓN DE CERRAR SESIÓN
+function cerrarSesion() {
+    document.getElementById('contenidoPrincipal').style.display = 'none';
+    document.getElementById('pantallaLogin').style.display = 'flex';
+    document.getElementById('usuario').value = '';
+    document.getElementById('contrasena').value = '';
+    document.getElementById('mensajeErrorLogin').style.display = 'none';
+}
+
 // ===== CONFIGURACIÓN DE FIREBASE =====
 const firebaseConfig = {
   apiKey: "AIzaSyDyeTJpaehpLtdaNj0QD293SVl9g0FQc",
@@ -273,11 +370,9 @@ async function agregarFoto() {
     const mensajeExito = document.getElementById('mensajeExito');
     const mensajeError = document.getElementById('mensajeError');
 
-    // Ocultar mensajes anteriores
     mensajeExito.style.display = 'none';
     mensajeError.style.display = 'none';
 
-    // Validaciones
     if (!num || num <= 0) { 
         mensajeError.textContent = '⚠️ Escribe un número válido del corredor';
         mensajeError.style.display = 'block';
@@ -289,16 +384,14 @@ async function agregarFoto() {
         return; 
     }
 
-    // ✅ URL RELATIVA — más simple y confiable
-    const urlFoto = `./fotos-corredores/${nombreArchivo}`;
+    // URL completa desde GitHub Pages
+    const urlFoto = `https://tonomarcp76-hash.github.io/corredores-deportivos/fotos-corredores/${nombreArchivo}`;
     console.log('📷 URL de la imagen:', urlFoto);
 
     try {
-        // Buscar si el corredor ya existe
         const existe = await coleccion.where('numero', '==', num).get();
 
         if (existe.empty) {
-            // Crear nuevo registro
             await coleccion.add({
                 numero: num,
                 nombre: `Corredor ${num}`,
@@ -306,7 +399,6 @@ async function agregarFoto() {
                 creado: firebase.firestore.FieldValue.serverTimestamp()
             });
         } else {
-            // Agregar foto al existente
             const docRef = existe.docs[0].ref;
             const datos = existe.docs[0].data();
             const galeria = datos.galeria || [];
@@ -315,10 +407,7 @@ async function agregarFoto() {
             });
         }
 
-        // Éxito
         mensajeExito.style.display = 'block';
-        
-        // Limpiar formulario
         document.getElementById('numeroCorredor').value = '';
         document.getElementById('nombreArchivo').value = '';
 
@@ -338,41 +427,334 @@ async function buscarCorredor() {
     const num = parseInt(document.getElementById('numCorredor').value);
     const tarjeta = document.getElementById('tarjeta');
     const aviso = document.getElementById('noEncontrado');
+    const galeria = document
+        }
+        button:hover { transform: translateY(-2px); box-shadow: 0 5px 20px rgba(0,255,204,0.4); }
+        
+        .tarjeta-corredor {
+            background: rgba(255,255,255,0.1);
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 25px;
+            display: none;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        .info-principal {
+            display: flex;
+            flex-wrap: wrap; 
+            gap: 30px; 
+            align-items: center; 
+            justify-content: center; 
+            text-align: center;
+        }
+        .datos h2 { color: #00ffcc; margin-bottom: 15px; font-size: 1.5rem; }
+        .datos p { margin: 8px 0; font-size: 1rem; line-height: 1.5; }
+        
+        .galeria { margin-top: 30px; }
+        .galeria h3 { 
+            color: #00ffcc; 
+            margin-bottom: 20px; 
+            text-align: center; 
+            font-size: 1.3rem;
+        }
+        .fotos { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); 
+            gap: 20px; 
+        }
+        .fotos img {
+            width: 100%; 
+            height: auto;
+            max-height: 400px;
+            object-fit: contain; 
+            border-radius: 10px;
+            transition: transform 0.3s;
+        }
+        .fotos img:hover { transform: scale(1.05); }
+        .imagen-error {
+            padding: 20px;
+            background: rgba(255,107,107,0.1);
+            border-radius: 8px;
+            text-align: center;
+            color: #ff6b6b;
+            font-size: 0.9rem;
+        }
+        
+        .mensaje { 
+            display: none; 
+            text-align: center; 
+            padding: 40px 20px; 
+            color: #ffcc66; 
+            font-size: 1.1rem;
+            background: rgba(255,204,102,0.1);
+            border-radius: 10px;
+        }
+        .exito { 
+            color: #00ffcc; 
+            text-align: center; 
+            margin-top: 15px; 
+            display: none; 
+            font-size: 1rem; 
+            padding: 12px; 
+            background: rgba(0,255,150,0.1); 
+            border-radius: 8px; 
+            max-width: 400px;
+            margin: 15px auto 0;
+        }
+        .error { 
+            color: #ff6b6b; 
+            background: rgba(255,107,107,0.1); 
+        }
+        .instruccion { 
+            font-size: 0.85rem; 
+            opacity: 0.7; 
+            margin-top: 15px; 
+            display: block;
+            line-height: 1.5;
+        }
+        .btn-cerrar {
+            background: transparent;
+            color: #00ffcc;
+            border: 1px solid #00ffcc;
+            float: right;
+            margin: 0;
+        }
+        .btn-cerrar:hover {
+            background: rgba(0,255,204,0.1);
+            transform: none;
+        }
+    </style>
+</head>
+<body>
+
+<!-- 🔐 PANTALLA DE INICIO DE SESIÓN -->
+<div class="pantalla-login" id="pantallaLogin">
+    <div class="caja-login">
+        <h2>🔐 Inicio de Sesión</h2>
+        <input type="text" id="usuario" placeholder="Usuario">
+        <input type="password" id="contrasena" placeholder="Contraseña">
+        <button onclick="iniciarSesion()">Ingresar</button>
+        <p id="mensajeErrorLogin" class="error-login">❌ Usuario o contraseña incorrectos</p>
+    </div>
+</div>
+
+<!-- 📄 CONTENIDO PRINCIPAL (OCULTO HASTA INICIAR SESIÓN) -->
+<div class="contenido-principal" id="contenidoPrincipal">
+    <div class="container">
+        <header>
+            <button class="btn-cerrar" onclick="cerrarSesion()">Cerrar Sesión</button>
+            <h1>🏃 ENCUENTRA A TU CORREDOR</h1>
+            <p>Escribe tu número y ve tus fotos</p>
+        </header>
+
+        <!-- 🔍 BUSCADOR DE FOTOS POR NÚMERO (PÚBLICO) -->
+        <div class="buscador">
+            <h2>🔍 Buscar Corredor por Número</h2>
+            <input type="number" id="numCorredor" placeholder="Escribe el número" min="1">
+            <br><br>
+            <button onclick="buscarCorredor()">Buscar Fotos</button>
+            <p class="instruccion">Escribe el número del corredor y pulsa Buscar</p>
+        </div>
+
+        <!-- 📸 TARJETA CON FOTOS DEL CORREDOR -->
+        <div id="tarjeta" class="tarjeta-corredor">
+            <div class="info-principal">
+                <div class="datos">
+                    <h2 id="nombreCorredor"></h2>
+                    <p><strong>Número:</strong> <span id="mostrarNumero"></span></p>
+                </div>
+            </div>
+            <div class="galeria">
+                <h3>📸 Fotos del Corredor</h3>
+                <div id="fotosGaleria" class="fotos"></div>
+            </div>
+        </div>
+
+        <!-- ⚠️ MENSAJE SI NO SE ENCUENTRA -->
+        <div id="noEncontrado" class="mensaje">
+            😕 No hay ningún corredor con ese número.<br>
+            Verifica que el número sea correcto.
+        </div>
+
+        <!-- 💳 FORMAS DE PAGO -->
+        <div class="pago">
+            <h3>💳 Formas de Pago — Inscripción</h3>
+            <div class="metodo">
+                <strong>💳 Tarjeta de Crédito / Débito</strong>
+                <p>Paga con cualquier tarjeta VISA, Mastercard o AMEX de forma segura.</p>
+            </div>
+            <div class="metodo">
+                <strong>🏦 Transferencia Bancaria — BBVA México</strong>
+                <p>Banco: BBVA México<br>Cuenta: 0123456789 | CLABE: 012345678901234567</p>
+            </div>
+            <div class="metodo">
+                <strong>📱 Otras opciones</strong>
+                <p>Mercado Pago / PayPal / Efectivo en puntos autorizados</p>
+            </div>
+        </div>
+
+        <!-- 📸 AGREGAR FOTO — SOLO CON SESIÓN INICIADA -->
+        <div class="agregar-foto">
+            <h3>📸 Agregar Foto de Corredor</h3>
+            
+            <label>Número del Corredor:</label>
+            <input type="number" id="numeroCorredor" placeholder="Ej: 1" min="1">
+            
+            <label>📁 Nombre del archivo en GitHub:</label>
+            <input type="text" id="nombreArchivo" placeholder="Ej: Leo-Messi-PNG-Imagen-Argentina-Sport-Renders.png">
+            
+            <br>
+            <button onclick="agregarFoto()">✅ Agregar Foto</button>
+            
+            <p class="instruccion">
+                💡 Primero sube la imagen a la carpeta <strong>fotos-corredores</strong> en tu repositorio de GitHub.<br>
+                Luego copia el nombre completo del archivo y pégalo arriba.
+            </p>
+            
+            <p id="mensajeExito" class="exito">✅ ¡Foto agregada correctamente!</p>
+            <p id="mensajeError" class="exito error" style="display:none;"></p>
+        </div>
+    </div>
+</div>
+
+<script>
+// 🔐 CREDENCIALES DE ACCESO
+const USUARIO_PERMITIDO = "admin";
+const CONTRASENA_PERMITIDA = "corredores2026";
+
+// 🔐 INICIO DE SESIÓN
+function iniciarSesion() {
+    const usuario = document.getElementById('usuario').value.trim();
+    const contrasena = document.getElementById('contrasena').value;
+    const mensajeError = document.getElementById('mensajeErrorLogin');
+
+    if (usuario === USUARIO_PERMITIDO && contrasena === CONTRASENA_PERMITIDA) {
+        document.getElementById('pantallaLogin').style.display = 'none';
+        document.getElementById('contenidoPrincipal').style.display = 'block';
+        mensajeError.style.display = 'none';
+    } else {
+        mensajeError.style.display = 'block';
+    }
+}
+
+// 🔐 CERRAR SESIÓN
+function cerrarSesion() {
+    document.getElementById('contenidoPrincipal').style.display = 'none';
+    document.getElementById('pantallaLogin').style.display = 'flex';
+    document.getElementById('usuario').value = '';
+    document.getElementById('contrasena').value = '';
+    document.getElementById('mensajeErrorLogin').style.display = 'none';
+}
+
+// ===== FIREBASE =====
+const firebaseConfig = {
+  apiKey: "AIzaSyDyeTJpaehpLtdaNj0QD293SVl9g0FQc",
+  authDomain: "corredores-deportivos.firebaseapp.com",
+  projectId: "corredores-deportivos",
+  storageBucket: "corredores-deportivos.appspot.com",
+  messagingSenderId: "426728020732",
+  appId: "1:426728020732:web:593ff2be0ef962afccd579"
+};
+
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+const coleccion = db.collection('corredores');
+
+// ===== AGREGAR FOTO =====
+async function agregarFoto() {
+    const num = parseInt(document.getElementById('numeroCorredor').value);
+    const nombreArchivo = document.getElementById('nombreArchivo').value.trim();
+    const mensajeExito = document.getElementById('mensajeExito');
+    const mensajeError = document.getElementById('mensajeError');
+
+    mensajeExito.style.display = 'none';
+    mensajeError.style.display = 'none';
+
+    if (!num || num <= 0) { 
+        mensajeError.textContent = '⚠️ Escribe un número válido del corredor';
+        mensajeError.style.display = 'block';
+        return; 
+    }
+    if (!nombreArchivo) { 
+        mensajeError.textContent = '⚠️ Escribe el nombre del archivo';
+        mensajeError.style.display = 'block';
+        return; 
+    }
+
+    const urlFoto = `https://tonomarcp76-hash.github.io/corredores-deportivos/fotos-corredores/${nombreArchivo}`;
+    console.log('📷 URL:', urlFoto);
+
+    try {
+        const existe = await coleccion.where('numero', '==', num).get();
+
+        if (existe.empty) {
+            await coleccion.add({
+                numero: num,
+                nombre: `Corredor ${num}`,
+                galeria: [urlFoto],
+                creado: firebase.firestore.FieldValue.serverTimestamp()
+            });
+        } else {
+            const docRef = existe.docs[0].ref;
+            const datos = existe.docs[0].data();
+            const galeria = datos.galeria || [];
+            await docRef.update({ galeria: [...galeria, urlFoto] });
+        }
+
+        mensajeExito.style.display = 'block';
+        document.getElementById('numeroCorredor').value = '';
+        document.getElementById('nombreArchivo').value = '';
+
+        setTimeout(() => { mensajeExito.style.display = 'none'; }, 4000);
+
+    } catch (error) {
+        console.error('❌ Error:', error);
+        mensajeError.textContent = '❌ Error: ' + error.message;
+        mensajeError.style.display = 'block';
+    }
+}
+
+// ===== BUSCAR CORREDOR =====
+async function buscarCorredor() {
+    const num = parseInt(document.getElementById('numCorredor').value);
+    const tarjeta = document.getElementById('tarjeta');
+    const aviso = document.getElementById('noEncontrado');
     const galeria = document.getElementById('fotosGaleria');
 
-    galeria.innerHTML = '';
     tarjeta.style.display = 'none';
     aviso.style.display = 'none';
+    galeria.innerHTML = '';
 
-    if (!num || isNaN(num)) {
-        alert('⚠️ Escribe un número válido');
+    if (!num || num <= 0) {
+        aviso.innerHTML = '⚠️ Escribe un número válido';
+        aviso.style.display = 'block';
         return;
     }
 
     try {
-        const snap = await coleccion.where('numero', '==', num).get();
-        
-        if (snap.empty) {
+        const snapshot = await coleccion.where('numero', '==', num).get();
+
+        if (snapshot.empty) {
+            aviso.innerHTML = '😕 No hay ningún corredor con ese número.<br>Verifica que el número sea correcto.';
             aviso.style.display = 'block';
             return;
         }
 
-        const datos = snap.docs[0].data();
-
+        const datos = snapshot.docs[0].data();
         document.getElementById('nombreCorredor').textContent = datos.nombre || `Corredor ${num}`;
-        document.getElementById('mostrarNumero').textContent = datos.numero;
+        document.getElementById('mostrarNumero').textContent = num;
 
         const fotos = datos.galeria || [];
+        
         if (fotos.length === 0) {
-            galeria.innerHTML = '<p style="opacity:0.7; text-align:center;">📸 No hay fotos registradas</p>';
+            galeria.innerHTML = '<p style="text-align:center; opacity:0.7;">📷 Aún no hay fotos para este corredor</p>';
         } else {
-            fotos.forEach((url, index) => {
+            fotos.forEach((url, i) => {
                 const contenedor = document.createElement('div');
-                contenedor.style.textAlign = 'center';
-                
                 const img = document.createElement('img');
                 img.src = url;
-                img.alt = `Foto del corredor #${num} - ${index + 1}`;
+                img.alt = `Foto ${i + 1}`;
                 img.loading = 'lazy';
                 
                 img.onerror = function() {
@@ -392,20 +774,11 @@ async function buscarCorredor() {
         tarjeta.style.display = 'block';
 
     } catch (error) {
-        console.error('Error al buscar:', error);
-        alert('❌ Error al buscar: ' + error.message);
+        console.error('❌ Error:', error);
+        aviso.innerHTML = '❌ Error al buscar: ' + error.message;
+        aviso.style.display = 'block';
     }
 }
-
-// Buscar al presionar Enter
-document.addEventListener('DOMContentLoaded', function() {
-    const campo = document.getElementById('numCorredor');
-    if (campo) {
-        campo.addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') buscarCorredor();
-        });
-    }
-});
 </script>
 
 </body>
