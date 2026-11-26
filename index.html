@@ -18,16 +18,19 @@
             color: #fff;
         }
         .container { max-width: 900px; margin: 0 auto; position: relative; }
-        header { text-align: center; padding: 20px 0; margin-top: 10px; }
+        header { 
+            text-align: center; 
+            padding: 20px 0; 
+            margin-top: 90px; /* Espacio para que no se amontone con el cuadro de admin */
+        }
         header h1 { font-size: 2rem; color: #00ffcc; text-shadow: 0 0 15px rgba(0,255,204,0.4); }
         
         /* 🔐 CUADRO DE ADMINISTRADOR - ESQUINA SUPERIOR IZQUIERDA */
         .login-box {
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 24%;
-            min-width: 220px;
+            top: 10px;
+            left: 10px;
+            width: 210px;
             background: rgba(255,255,255,0.1);
             padding: 15px;
             border-radius: 12px;
@@ -36,14 +39,18 @@
             border: 1px solid rgba(255,255,255,0.2);
             z-index: 10;
         }
-        .login-box h2 { color: #00ffcc; margin-bottom: 10px; font-size: 1rem; }
+        .login-box h2 { color: #00ffcc; margin-bottom: 12px; font-size: 1rem; }
         .login-box input {
-            width: 100%; margin: 6px auto; display: block;
-            padding: 8px 10px; border-radius: 8px; border: none;
+            width: 100%; margin: 8px auto; display: block;
+            padding: 10px; border-radius: 8px; border: none;
             background: rgba(255,255,255,0.95); color: #0f2027;
             font-size: 0.9rem;
         }
-        .login-box p { font-size: 0.75rem; opacity: 0.7; margin-top: 8px; }
+        .login-box button {
+            padding: 6px 14px;
+            font-size: 0.85rem;
+        }
+        .login-box p { font-size: 0.75rem; opacity: 0.7; margin-top: 10px; line-height: 1.4; }
         
         .buscador, .form-agregar, .pago {
             background: rgba(255,255,255,0.1);
@@ -101,7 +108,7 @@
         }
         button:hover { transform: translateY(-2px); box-shadow: 0 5px 20px rgba(0,255,204,0.4); }
         .btn-rojo { background: #ff6b6b; color: #fff; }
-        .btn-salir { position: absolute; top: 0; right: 0; padding: 6px 12px; font-size: 0.85rem; z-index: 11; }
+        .btn-salir { position: absolute; top: 10px; right: 10px; padding: 6px 12px; font-size: 0.85rem; z-index: 11; }
         .cargando { opacity: 0.6; pointer-events: none; }
         
         .progreso { width: 100%; max-width: 400px; height: 18px; background: rgba(0,0,0,0.3); border-radius: 9px; margin: 10px 0; display: none; }
@@ -151,8 +158,8 @@
         <input type="text" id="usuario" placeholder="Usuario">
         <input type="password" id="contrasena" placeholder="Contraseña">
         <br>
-        <button onclick="iniciarSesion()" style="padding:6px 12px; font-size:0.85rem;">Entrar</button>
-        <p>Solo el administrador puede registrar corredores</p>
+        <button onclick="iniciarSesion()">Entrar</button>
+        <p>Solo el administrador puede registrar corredores y subir fotos</p>
     </div>
 
     <button id="btnSalir" class="btn-rojo btn-salir oculto" onclick="cerrarSesion()">🚪 Salir</button>
@@ -347,12 +354,12 @@ async function subirArchivo(archivo, ruta) {
 
 // ===== GUARDAR CORREDOR Y SUBIR FOTOS =====
 async function guardarCorredor() {
+    if (!sesionActiva) { alert('⚠️ Inicia sesión primero'); return
     if (!sesionActiva) { alert('⚠️ Inicia sesión primero'); return; }
 
     const num = parseInt(document.getElementById('fNumero').value);
     const nombre = document.getElementById('fNombre').value.trim();
     const cat = document.getElementById('fCategoria').value.trim();
-    const equipo = document.getElementById('
     const equipo = document.getElementById('fEquipo').value.trim();
     const tiempo = document.getElementById('fTiempo').value.trim();
     const fotoPerfilArchivo = document.getElementById('fotoPerfilArchivo').files[0];
@@ -488,5 +495,3 @@ document.addEventListener('DOMContentLoaded', function() {
 
 </body>
 </html>
-
-
