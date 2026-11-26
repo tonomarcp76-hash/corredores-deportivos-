@@ -21,11 +21,11 @@
         header { 
             text-align: center; 
             padding: 20px 0; 
-            margin-top: 90px; /* Espacio para que no se amontone con el cuadro de admin */
+            margin-top: 90px;
         }
         header h1 { font-size: 2rem; color: #00ffcc; text-shadow: 0 0 15px rgba(0,255,204,0.4); }
         
-        /* 🔐 CUADRO DE ADMINISTRADOR - ESQUINA SUPERIOR IZQUIERDA */
+        /* 🔐 CUADRO DE ADMINISTRADOR */
         .login-box {
             position: absolute;
             top: 10px;
@@ -152,7 +152,7 @@
 <body onload="verificarSesion()">
 
 <div class="container">
-    <!-- 🔐 INICIO DE SESIÓN ADMINISTRADOR - ESQUINA SUPERIOR IZQUIERDA -->
+    <!-- 🔐 INICIO DE SESIÓN ADMINISTRADOR -->
     <div id="cajaLogin" class="login-box">
         <h2>🔐 Admin</h2>
         <input type="text" id="usuario" placeholder="Usuario">
@@ -169,7 +169,7 @@
         <p>Escribe tu número y ve tus fotos</p>
     </header>
 
-    <!-- 🔍 BUSCADOR DE FOTOS POR NÚMERO — ARRIBA -->
+    <!-- 🔍 BUSCADOR DE FOTOS POR NÚMERO -->
     <div class="buscador">
         <h2>🔍 Buscar Corredor por Número</h2>
         <input type="number" id="numCorredor" placeholder="Escribe el número" min="1">
@@ -177,7 +177,7 @@
         <p class="instruccion">Escribe el número del corredor y pulsa Buscar</p>
     </div>
 
-    <!-- 💳 FORMAS DE PAGO — ABAJO DEL BUSCADOR -->
+    <!-- 💳 FORMAS DE PAGO -->
     <div class="pago">
         <h3>💳 Formas de Pago — Inscripción</h3>
         <div class="metodo">
@@ -194,12 +194,12 @@
         </div>
     </div>
 
-    <!-- 📷 BOTÓN PARA ABRIR FORMULARIO (SOLO ADMIN) -->
+    <!-- 📷 BOTÓN PARA ABRIR FORMULARIO -->
     <div id="botonRegistrar" class="oculto" style="text-align: center; margin-bottom: 20px;">
         <button onclick="mostrarFormulario()">📷 Registrar Corredor y Subir Fotos</button>
     </div>
 
-    <!-- 📤 FORMULARIO DE REGISTRO Y SUBIDA DE FOTOS -->
+    <!-- 📤 FORMULARIO DE REGISTRO -->
     <div id="formAgregar" class="form-agregar oculto">
         <h3>📋 Registrar Nuevo Corredor</h3>
         
@@ -296,7 +296,7 @@ function iniciarSesion() {
         document.getElementById('btnSalir').classList.remove('oculto');
         alert('✅ ¡Bienvenido! Ahora puedes registrar corredores y subir fotos');
     } else {
-        alert('❌ Usuario o contraseña incorrectos');
+        alert('❌ Usuario o contraseña incorrectos\n\nUsuario: admin\nContraseña: corredores2026');
     }
 }
 
@@ -354,12 +354,12 @@ async function subirArchivo(archivo, ruta) {
 
 // ===== GUARDAR CORREDOR Y SUBIR FOTOS =====
 async function guardarCorredor() {
-    if (!sesionActiva) { alert('⚠️ Inicia sesión primero'); return
     if (!sesionActiva) { alert('⚠️ Inicia sesión primero'); return; }
 
     const num = parseInt(document.getElementById('fNumero').value);
     const nombre = document.getElementById('fNombre').value.trim();
     const cat = document.getElementById('fCategoria').value.trim();
+    const
     const equipo = document.getElementById('fEquipo').value.trim();
     const tiempo = document.getElementById('fTiempo').value.trim();
     const fotoPerfilArchivo = document.getElementById('fotoPerfilArchivo').files[0];
@@ -495,3 +495,4 @@ document.addEventListener('DOMContentLoaded', function() {
 
 </body>
 </html>
+
