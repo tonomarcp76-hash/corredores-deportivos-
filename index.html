@@ -440,14 +440,19 @@ async function buscarCorredor() {
                 img.alt = `Foto ${i + 1}`;
                 img.loading = 'lazy';
                 
-                img.onerror = function() {
-                    contenedor.innerHTML = `
-                        <div class="imagen-error">
-                            ❌ No se pudo cargar<br>
-                            <small>Verifica el nombre del archivo</small>
-                        </div>
-                    `;
-                };
+               img.onload = function() {
+    // Imagen cargó correctamente
+};
+
+img.onerror = function() {
+    contenedor.innerHTML = `
+        <div class="imagen-error">
+            ❌ No se pudo cargar<br>
+            <small>Verifica el nombre del archivo</small>
+        </div>
+    `;
+};
+
                 
                 contenedor.appendChild(img);
                 galeria.appendChild(contenedor);
