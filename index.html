@@ -21,10 +21,10 @@
             max-width: 900px; 
             margin: 0 auto; 
             position: relative; 
-            padding-top: 90px; /* Espacio para el cuadro de admin */
+            padding-top: 90px;
         }
 
-        /* 🔐 CUADRO DE ADMINISTRADOR — FIJO, NO SE ENCIMA */
+        /* 🔐 CUADRO DE ADMINISTRADOR */
         .login-box {
             position: fixed;
             top: 20px;
@@ -255,7 +255,7 @@
 <body onload="verificarSesion()">
 
 <div class="container">
-    <!-- 🔐 INICIO DE SESIÓN ADMINISTRADOR — FIJO ARRIBA IZQUIERDA -->
+    <!-- 🔐 INICIO DE SESIÓN ADMINISTRADOR -->
     <div id="cajaLogin" class="login-box">
         <h2>🔐 Admin</h2>
         <input type="text" id="usuario" placeholder="Usuario">
@@ -416,12 +416,12 @@ function verificarSesion() {
 function cerrarSesion() {
     sesionActiva = false;
     localStorage.removeItem('sesion');
-    document.getElementById('cajaLogin').class
-        document.getElementById('cajaLogin').classList.remove('oculto');
-        document.getElementById('botonRegistrar').classList.add('oculto');
-        document.getElementById('formAgregar').classList.add('oculto');
-        document.getElementById('btnSalir').classList.add('oculto');
-        document.getElementById('usuario').value = '';
+    document.getElementById('cajaLogin').classList.remove('oculto');
+    document.getElementById('botonRegistrar').classList.add('oculto');
+    document.getElementById('formAgregar').classList.add('oculto');
+    document.getElementById('btnSalir').classList.add('oculto');
+    document.getElementById('usuario').value = '';
+    document.getElementById('
         document.getElementById('contrasena').value = '';
     }
 
