@@ -433,29 +433,31 @@ async function buscarCorredor() {
         if (fotos.length === 0) {
             galeria.innerHTML = '<p style="text-align:center; opacity:0.7;">📷 Aún no hay fotos para este corredor</p>';
         } else {
-            fotos.forEach((url, i) => {
-                const contenedor = document.createElement('div');
-                const img = document.createElement('img');
-                img.src = url;
-                img.alt = `Foto ${i + 1}`;
-                img.loading = 'lazy';
-                
-               img.onload = function() {
-    // Imagen cargó correctamente
+           fotos.forEach((url, i) => {
+    const contenedor = document.createElement('div');
+    const img = document.createElement('img');
+    
+    img.src = url;
+    img.alt = `Foto ${i + 1}`;
+    img.loading = 'lazy';
+    
+    img.onload = function() {
+        contenedor.appendChild(img);
+        galeria.appendChild(contenedor);
+    };
+    
+    img.onerror = function() {
+        const errorDiv = document.createElement('div');
+        errorDiv.className = 'imagen-error';
+        errorDiv.innerHTML = '❌ No se pudo cargar<br><small>Verifica el nombre del archivo</small>';
+        galeria.appendChild(errorDiv);
+    };
+});
+
 };
 
-img.onerror = function() {
-    contenedor.innerHTML = `
-        <div class="imagen-error">
-            ❌ No se pudo cargar<br>
-            <small>Verifica el nombre del archivo</small>
-        </div>
-    `;
-};
-
                 
-                contenedor.appendChild(img);
-                galeria.appendChild(contenedor);
+              
             });
         }
 
