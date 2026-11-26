@@ -429,35 +429,28 @@ async function buscarCorredor() {
 
         const fotos = datos.galeria || [];
         
-       
         if (fotos.length === 0) {
             galeria.innerHTML = '<p style="text-align:center; opacity:0.7;">📷 Aún no hay fotos para este corredor</p>';
         } else {
-           fotos.forEach((url, i) => {
-    const contenedor = document.createElement('div');
-    const img = document.createElement('img');
-    
-    img.src = url;
-    img.alt = `Foto ${i + 1}`;
-    img.loading = 'lazy';
-    
-    img.onload = function() {
-        contenedor.appendChild(img);
-        galeria.appendChild(contenedor);
-    };
-    
-    img.onerror = function() {
-        const errorDiv = document.createElement('div');
-        errorDiv.className = 'imagen-error';
-        errorDiv.innerHTML = '❌ No se pudo cargar<br><small>Verifica el nombre del archivo</small>';
-        galeria.appendChild(errorDiv);
-    };
-});
-
-};
-
+            fotos.forEach((url, i) => {
+                const contenedor = document.createElement('div');
+                const img = document.createElement('img');
                 
-              
+                img.src = url;
+                img.alt = `Foto ${i + 1}`;
+                img.loading = 'lazy';
+                
+                img.onload = function() {
+                    contenedor.appendChild(img);
+                    galeria.appendChild(contenedor);
+                };
+                
+                img.onerror = function() {
+                    const errorDiv = document.createElement('div');
+                    errorDiv.className = 'imagen-error';
+                    errorDiv.innerHTML = '❌ No se pudo cargar<br><small>Verifica el nombre del archivo</small>';
+                    galeria.appendChild(errorDiv);
+                };
             });
         }
 
@@ -473,6 +466,7 @@ async function buscarCorredor() {
 
 </body>
 </html>
+
 
 
 
