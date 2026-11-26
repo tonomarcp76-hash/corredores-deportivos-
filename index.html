@@ -277,8 +277,8 @@ async function agregarFoto() {
         return; 
     }
 
-    // URL directa desde tu GitHub Pages
-    const urlFoto = `https://tonomarcp76-hash.github.io/corredores-deportivos/fotos-corredores/${encodeURI(nombreArchivo)}`;
+    // ✅ URL CORREGIDA usando raw.githubusercontent.com
+    const urlFoto = `https://raw.githubusercontent.com/tonomarcp76-hash/corredores-deportivos/main/fotos-corredores/${nombreArchivo}`;
     console.log('📷 URL de la imagen:', urlFoto);
 
     try {
@@ -384,5 +384,4 @@ document.addEventListener('DOMContentLoaded', function() {
 
 </body>
 </html>
-
 
