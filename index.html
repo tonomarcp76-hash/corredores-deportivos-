@@ -20,51 +20,16 @@
         .container { 
             max-width: 900px; 
             margin: 0 auto; 
-            position: relative; 
-            padding-top: 90px;
         }
 
-        /* 🔐 CUADRO DE ADMINISTRADOR */
-        .login-box {
-            position: fixed;
-            top: 20px;
-            left: 20px;
-            width: 230px;
-            background: rgba(255,255,255,0.1);
-            padding: 16px;
-            border-radius: 12px;
-            text-align: center;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255,255,255,0.2);
-            z-index: 100;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-        }
-        .login-box h2 { color: #00ffcc; margin-bottom: 10px; font-size: 1rem; }
-        .login-box input {
-            width: 100%; 
-            margin: 8px 0; 
-            padding: 10px; 
-            border-radius: 8px; 
-            border: none;
-            background: rgba(255,255,255,0.95); 
-            color: #0f2027;
-            font-size: 0.9rem;
-        }
-        .login-box button {
-            padding: 8px 16px;
-            font-size: 0.9rem;
-            width: 100%;
-        }
-        .login-box p { font-size: 0.75rem; opacity: 0.7; margin-top: 10px; line-height: 1.4; }
-        
         header { 
             text-align: center; 
-            padding: 10px 0 30px; 
+            padding: 30px 0; 
         }
         header h1 { font-size: 2rem; color: #00ffcc; text-shadow: 0 0 15px rgba(0,255,204,0.4); }
         header p { opacity: 0.8; margin-top: 5px; }
         
-        .buscador, .form-agregar, .pago {
+        .buscador, .form-agregar, .pago, .login-section, .registro-section {
             background: rgba(255,255,255,0.1);
             padding: 30px;
             border-radius: 15px;
@@ -73,7 +38,7 @@
             border: 1px solid rgba(255,255,255,0.2);
         }
         .buscador { text-align: center; }
-        .buscador h2, .pago h3, .form-agregar h3 { 
+        .buscador h2, .pago h3, .form-agregar h3, .login-section h3 { 
             color: #00ffcc; 
             margin-bottom: 20px;
             font-size: 1.3rem;
@@ -91,6 +56,44 @@
             background: rgba(255,255,255,0.95);
             color: #0f2027;
         }
+
+        /* 🔐 SECCIÓN DE ADMINISTRADOR — HORIZONTAL */
+        .login-section h3 { text-align: center; }
+        .login-box {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            justify-content: center;
+            align-items: center;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+        .login-box input {
+            flex: 1;
+            min-width: 150px;
+            padding: 12px 16px;
+            border-radius: 8px;
+            border: none;
+            background: rgba(255,255,255,0.95);
+            color: #0f2027;
+            font-size: 0.95rem;
+        }
+        .login-box button {
+            padding: 12px 24px;
+            margin: 0;
+            white-space: nowrap;
+        }
+        .login-box p { 
+            width: 100%;
+            text-align: center;
+            font-size: 0.8rem; 
+            opacity: 0.7; 
+            margin-top: 12px;
+        }
+
+        .registro-section { text-align: center; }
+        .registro-section p { margin-top: 8px; font-size: 0.85rem; opacity: 0.7; }
+
         .form-agregar { display: none; text-align: left; }
         .form-agregar.mostrar { display: block; }
         .form-agregar label { 
@@ -247,25 +250,11 @@
             margin-top: 10px; 
             display: block;
         }
-        #botonRegistrar {
-            text-align: center; 
-            margin: 10px 0 25px;
-        }
     </style>
 </head>
 <body onload="verificarSesion()">
 
 <div class="container">
-    <!-- 🔐 INICIO DE SESIÓN ADMINISTRADOR -->
-    <div id="cajaLogin" class="login-box">
-        <h2>🔐 Admin</h2>
-        <input type="text" id="usuario" placeholder="Usuario">
-        <input type="password" id="contrasena" placeholder="Contraseña">
-        <br>
-        <button onclick="iniciarSesion()">Entrar</button>
-        <p>Solo el administrador puede registrar corredores y subir fotos</p>
-    </div>
-
     <button id="btnSalir" class="btn-rojo btn-salir oculto" onclick="cerrarSesion()">🚪 Salir</button>
 
     <header>
@@ -299,9 +288,21 @@
         </div>
     </div>
 
-    <!-- 📷 BOTÓN PARA ABRIR FORMULARIO -->
-    <div id="botonRegistrar" class="oculto">
+    <!-- 🔐 INICIO DE SESIÓN ADMINISTRADOR — AHORA ABAJO Y HORIZONTAL -->
+    <div id="seccionLogin" class="login-section">
+        <h3>🔐 Panel de Administración</h3>
+        <div class="login-box">
+            <input type="text" id="usuario" placeholder="Usuario">
+            <input type="password" id="contrasena" placeholder="Contraseña">
+            <button onclick="iniciarSesion()">Entrar</button>
+            <p>Solo el administrador puede registrar corredores y subir fotos</p>
+        </div>
+    </div>
+
+    <!-- 📷 BOTÓN PARA ABRIR FORMULARIO (SOLO CUANDO HAY SESIÓN) -->
+    <div id="seccionRegistro" class="registro-section oculto">
         <button onclick="mostrarFormulario()">📷 Registrar Corredor y Subir Fotos</button>
+        <p>Entraste como administrador — ¡Bienvenido!</p>
     </div>
 
     <!-- 📤 FORMULARIO DE REGISTRO -->
@@ -396,8 +397,8 @@ function iniciarSesion() {
     if (user === USUARIO_ADMIN && pass === CONTRASENA_ADMIN) {
         sesionActiva = true;
         localStorage.setItem('sesion', 'activa');
-        document.getElementById('cajaLogin').classList.add('oculto');
-        document.getElementById('botonRegistrar').classList.remove('oculto');
+        document.getElementById('seccionLogin').classList.add('oculto');
+        document.getElementById('seccionRegistro').classList.remove('oculto');
         document.getElementById('btnSalir').classList.remove('oculto');
         alert('✅ ¡Bienvenido! Ahora puedes registrar corredores y subir fotos');
     } else {
@@ -408,8 +409,8 @@ function iniciarSesion() {
 function verificarSesion() {
     if (localStorage.getItem('sesion') === 'activa') {
         sesionActiva = true;
-        document.getElementById('cajaLogin').classList.add('oculto');
-        document.getElementById('botonRegistrar').classList.remove('oculto');
+        document.getElementById('seccionLogin').classList.add('oculto');
+        document.getElementById('seccionRegistro').classList.remove('oculto');
         document.getElementById('btnSalir').classList.remove('oculto');
     }
 }
@@ -417,12 +418,17 @@ function verificarSesion() {
 function cerrarSesion() {
     sesionActiva = false;
     localStorage.removeItem('sesion');
-    document.getElementById('cajaLogin').classList.remove('oculto');
-    document.getElementById('botonRegistrar').classList.add('oculto');
+    document.getElementById('seccionLogin').classList.remove('oculto');
+    document.getElementById('seccionRegistro').classList.add('oculto');
+    document.getElementById('form
+function cerrarSesion() {
+    sesionActiva = false;
+    localStorage.removeItem('sesion');
+    document.getElementById('seccionLogin').classList.remove('oculto');
+    document.getElementById('seccionRegistro').classList.add('oculto');
     document.getElementById('formAgregar').classList.add('oculto');
     document.getElementById('btnSalir').classList.add('oculto');
     document.getElementById('usuario').value = '';
-    document.getElementById('contrasena').value = '';
     document.getElementById('contrasena').value = '';
 }
 
@@ -600,6 +606,5 @@ document.addEventListener('DOMContentLoaded', function() {
 
 </body>
 </html>
-
 
 
